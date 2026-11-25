@@ -8,41 +8,38 @@
 
 ## ⏱️ Roteiro Minuto a Minuto (5 Minutos de Apresentação)
 
-### 00:00 – 00:45 | Introdução e Capa (Slide 1 e 2)
-* **Quem fala:** Integrante 1 (ou Heitor)
-* **O que dizer:**
-  > "Boa noite, professor e colegas. Nosso projeto integrador A3 é o **TechAssist AI**, um chatbot inteligente de triagem e atendimento Nível 1 para Helpdesk corporativo de TI. Identificamos que mais de 50% dos chamados abertos em empresas são demandas repetitivas — como redefinição de senhas, lentidão e VPN. O TechAssist automatiza essas soluções e formaliza tickets N2 com protocolo, tudo através de um mecanismo autoral de IA e PLN, sem recorrer a APIs pagas."
+## ⏱️ Roteiro Minuto a Minuto (6:30 de Apresentação + 1:30 de Perguntas)
 
-### 00:45 – 01:30 | Domínio e Base de Conhecimento (Slide 3)
-* **Quem fala:** Integrante 2 (Dados e Curadoria)
+### 00:00 – 01:45 | Introdução, Desafio de TI e Núcleo de IA/PLN (Slides 1 a 5)
+* **Quem fala:** **Heitor Della Barba Westphal** (Líder / Engenharia de PLN)
 * **O que dizer:**
-  > "O enunciado exigia ao menos 3 categorias, mas modelamos **8 intenções completas**: reset de senha, falhas na VPN, lentidão da máquina, catálogo de softwares, abertura de chamados, canais de atendimento, saudação e perguntas fora de escopo. Todos os dados foram estruturados em JSON e o corpus de treinamento foi construído com mais de 100 sentenças balanceadas, respeitando a privacidade e a LGPD com dados fictícios."
+  > "Boa noite, professor e colegas. Nosso projeto integrador A3 é o **TechAssist AI**, uma central corporativa inteligente de triagem e suporte técnico N1. Identificamos que entre 40% e 60% dos chamados de Helpdesk são solicitações repetitivas de N1 — como reset de senhas, falhas de VPN e lentidão de máquinas.
+  > Para atender ao **Requisito Central R3**, concebemos uma arquitetura autoral híbrida (Opção C): normalização Unicode NFKD, remoção seletiva de stopwords, vetorização vetorial **TF-IDF n-grams (1, 2)**, classificação supervisionada via **Regressão Logística com Softmax** e **Similaridade por Cosseno**. Não recorremos a chamadas externas de LLMs: todo o cálculo vetorial é processado localmente em menos de 0.6 milissegundos com um limiar matemático de fallback calibrado em $\theta = 0.38$."
 
-### 01:30 – 02:30 | O Mecanismo Próprio de IA e PLN (Slides 4 e 5) — *Ponto Crítico (R3)*
-* **Quem fala:** Heitor Westphal (Desenvolvimento de IA)
+### 01:45 – 03:00 | Base de Conhecimento e Gestão de Sessão Multi-Turnos (Slides 3 e 4)
+* **Quem fala:** **Ian Santiago Silveira** (Motor de Diálogo)
 * **O que dizer:**
-  > "Para atender ao Requisito Central R3, implementamos um pipeline de IA próprio nos arquivos `src/nlp_preprocessor.py` e `src/intent_classifier.py`. Primeiro, a entrada passa por normalização Unicode NFKD, remoção de acentos e stopwords seletivas que preservam negações. Em seguida, vetorizamos o texto via **TF-IDF com unigramas e bigramas**. A predição utiliza **Regressão Logística Multinomial** combinada com **Similaridade de Cosseno**. Calculamos um score híbrido de confiança e, caso o valor seja menor que o limiar de **0.38**, o sistema não chuta: ele aciona abstenção segura (fallback)."
+  > "O edital solicitava ao menos 3 categorias, mas estruturamos **8 intenções completas** na base semiestruturada JSON (`data/knowledge_base.json`), acompanhadas de um corpus supervisionado com mais de 100 sentenças balanceadas.
+  > Implementei no `src/bot_engine.py` a orquestração conversacional com máquina de estados finitos. Quando o usuário necessita de atendimento humano especializado, o motor transiciona de estado, coleta os detalhes do incidente e formaliza o chamado técnico gerando um protocolo único (ex: `#TK-10842`), evitando alucinações e garantindo que o colaborador seja encaminhado diretamente à fila correta de N2."
 
-### 02:30 – 03:30 | Demonstração ao Vivo na Tela (Slide 8)
-* **Quem fala:** Integrante 4 (ou responsável pela demonstração)
-* **Passo a passo prático na tela:**
-  1. Abrir o navegador em `http://localhost:5000` (ou rodar `./iniciar_web.sh`).
-  2. Digitar uma pergunta típica: `"esqueci minha senha do computador"`.
-     * *Mostrar:* O bot responde imediatamente com o passo a passo seguro do portal e o badge verde indica **Intenção: redefinicao_senha** e **Confiança de ~75%**.
-  3. Digitar uma pergunta fora de escopo: `"qual o cardápio do almoço de hoje"`.
-     * *Mostrar:* O bot aciona fallback seguro com badge âmbar, informa que não é do escopo de TI e sugere os tópicos homologados.
-  4. Digitar `"quero abrir um chamado"`.
-     * *Mostrar:* O bot solicita o relato do problema. Ao enviar `"tela azul após atualizar o windows"`, o bot gera o ticket estruturado com protocolo exclusivo (ex: `Ticket #TK-84920`).
-
-### 03:30 – 04:30 | Resultados, Métricas e Análise de Falhas (Slides 6 e 7)
-* **Quem fala:** Integrante 3 (Testes e Métricas)
+### 03:00 – 04:15 | Persistência Relacional SQLite e Governança ITIL/LGPD (Slide 10 e 11)
+* **Quem fala:** **Bruno Hudson Siebert Costa** (Engenharia de Dados & DevOps)
 * **O que dizer:**
-  > "Executamos uma bateria formal com 25 casos de teste divididos nas 5 categorias do Requisito R5. Atingimos **72% de acurácia global**, com **100% de precisão técnica nas intenções de TI** — ou seja, o bot nunca confunde senha com VPN. Nas análises de falha exigidas no Marco 5, identificamos que os erros ocorreram em gírias severas ('carroça') e erros de digitação ('esquessi a ssnha'), onde o bot preferiu o fallback seguro. Como melhoria futura, propusemos um corretor por Distância de Levenshtein e embeddings morfológicos."
+  > "Para atender aos padrões corporativos de governança **ITIL v4 e LGPD**, implementei a camada de persistência relacional em SQLite (`src/database.py` e `data/techassist.db`).
+  > Todos os incidentes escalonados pelo chatbot são gravados atomicamente no banco com campos de auditoria: protocolo, solicitante, departamento, descrição, intenção inferida pela IA, score de confiança e status de atendimento — permitindo a transição do chamado de 'ABERTO' para 'EM_ATENDIMENTO' e 'RESOLVIDO' com data e hora de fechamento. Além disso, estruturei a esteira automatizada de CI/CD no GitHub Actions que valida o build e executa 100% dos testes a cada commit."
 
-### 04:30 – 05:00 | Conclusão e Encerramento (Slide 10)
-* **Quem fala:** Toda a equipe
+### 04:15 – 05:45 | Demonstração ao Vivo, Swagger UI e Live Test Runner (Slide 11 e 12)
+* **Quem fala:** **João Víctor Muniz da Silva** (API REST & Interface Web)
+* **O que dizer e mostrar na tela:**
+  > "Desenvolvi a interface web moderna e a API RESTful corporativa em Flask (`src/app_web.py`).
+  > 1. *(Demonstrar Chat e Telemetria):* No navegador em `http://localhost:5000`, envio a pergunta *'esqueci minha senha do computador'*. O bot responde imediatamente com o procedimento institucional e o painel lateral do **Chart.js** plota em tempo real a distribuição de probabilidades Softmax da IA e a latência de inferência (<1ms).
+  > 2. *(Demonstrar Fallback Seguro):* Envio uma dúvida fora de escopo (*'qual a receita de bolo'*). O bot não alucina: ativa o fallback seguro com confiança < 0.38 e oferece suporte N2.
+  > 3. *(Demonstrar Live Test Runner e Swagger):* Clico na aba *Live Test Runner* e executo os **25 testes formais do edital em tempo real na frente do professor**, exibindo acurácia de 72% (e 88% com corretor de Levenshtein ativado no Marco 5). Além disso, temos a documentação interativa em `/docs` compatível com a especificação OpenAPI 3.0."
+
+### 05:45 – 06:30 | Conclusão, Resultados Científicos e Encerramento (Slide 13)
+* **Quem fala:** **Toda a Equipe**
 * **O que dizer:**
-  > "Todos os requisitos (R1 a R7), relatórios e artefatos foram entregues e testados. Estamos prontos para as perguntas do professor."
+  > "Consolidamos nosso trabalho com 11 gráficos científicos de 300 DPI, relatório técnico formal com mais de 8 páginas e 30 testes unitários automatizados com 100% de aprovação no PyTest. Todos os requisitos (R1 a R7) foram integralmente superados. Estamos à disposição para as perguntas da banca!"
 
 ---
 

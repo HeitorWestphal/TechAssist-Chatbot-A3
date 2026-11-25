@@ -6,12 +6,12 @@ info:
     Fornece inferência de Processamento de Linguagem Natural (NLP), classificação probabilística de intenções, explicabilidade de tokens (XAI) e persistência relacional de chamados de suporte N2.
   version: 1.0.0
   contact:
-    name: Heitor Westphal & Equipe de Engenharia
+    name: Heitor Della Barba Westphal, Bruno Hudson Siebert Costa, Ian Santiago Silveira, João Víctor Muniz da Silva
     email: heitordbw2006@gmail.com
 
 servers:
-  - url: http://localhost:5001
-    description: Servidor de Desenvolvimento Local
+  - url: http://localhost:5000
+    description: Servidor de Desenvolvimento Local (Flask)
 
 paths:
   /api/chat:

@@ -126,6 +126,97 @@ def generate_stress_test_chart():
     plt.close()
     print(f"[OK] Gráfico de estresse salvo em: {out_path}")
 
+def generate_kfold_chart():
+    """Executa validação cruzada 5-Fold estratificada e plota robustez estatística."""
+    import csv
+    import json
+    from sklearn.model_selection import StratifiedKFold
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.naive_bayes import MultinomialNB
+    from sklearn.svm import LinearSVC
+    from sklearn.metrics import accuracy_score
+    from src.nlp_preprocessor import clean_text
+
+    data_path = os.path.join(os.path.dirname(__file__), "..", "data", "training_dataset.csv")
+    texts = []
+    labels = []
+    with open(data_path, mode="r", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            texts.append(row["texto"].strip())
+            labels.append(row["intencao"].strip())
+
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+    models = {
+        "Opção B1: Naive Bayes": MultinomialNB(alpha=0.5),
+        "Opção B2: Linear SVM": LinearSVC(C=1.0, random_state=42),
+        "Opção C: TechAssist (LogReg)": LogisticRegression(C=3.0, class_weight="balanced", random_state=42)
+    }
+
+    results = {m: [] for m in models}
+
+    for fold, (train_idx, val_idx) in enumerate(skf.split(texts, labels)):
+        X_train = [texts[i] for i in train_idx]
+        y_train = [labels[i] for i in train_idx]
+        X_val = [texts[i] for i in val_idx]
+        y_val = [labels[i] for i in val_idx]
+
+        vec = TfidfVectorizer(preprocessor=clean_text, ngram_range=(1, 2), sublinear_tf=True)
+        X_tr_vec = vec.fit_transform(X_train)
+        X_va_vec = vec.transform(X_val)
+
+        for m_name, clf in models.items():
+            clf.fit(X_tr_vec, y_train)
+            preds = clf.predict(X_va_vec)
+            acc = accuracy_score(y_val, preds)
+            results[m_name].append(acc)
+
+    summary = {}
+    for m_name, scores in results.items():
+        summary[m_name] = {
+            "scores_por_fold": [round(s * 100, 2) for s in scores],
+            "media_acuracia": round(float(np.mean(scores)) * 100, 2),
+            "desvio_padrao": round(float(np.std(scores)) * 100, 2)
+        }
+
+    json_path = os.path.join(RESULTS_DIR, "cross_validation_kfold.json")
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2, ensure_ascii=False)
+
+    fig, ax = plt.subplots(figsize=(8.5, 5.2), dpi=300)
+    fig.patch.set_facecolor("#ffffff")
+    ax.set_facecolor("#f8fafc")
+
+    x_pos = np.arange(len(models))
+    means = [summary[m]["media_acuracia"] for m in models]
+    stds = [summary[m]["desvio_padrao"] for m in models]
+    colors_list = ["#f59e0b", "#8b5cf6", "#2563eb"]
+
+    bars = ax.bar(x_pos, means, yerr=stds, capsize=6, color=colors_list, alpha=0.88, edgecolor="#1e293b", linewidth=1.2, width=0.52)
+
+    for bar, m_val, s_val in zip(bars, means, stds):
+        yval = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width() / 2.0, yval + s_val + 1.2,
+                f"{m_val:.1f}%\n(±{s_val:.1f}%)", ha="center", va="bottom",
+                fontsize=10.5, fontweight="bold", color="#0f172a")
+
+    ax.set_xticks(x_pos)
+    ax.set_xticklabels([m.split(": ")[1] for m in models], fontsize=11, fontweight="bold", color="#0f172a")
+    ax.set_ylabel("Acurácia de Validação Cruzada (%)", fontsize=11, fontweight="bold", color="#0f172a", labelpad=8)
+    ax.set_ylim(70, 105)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.6, color="#94a3b8")
+
+    plt.title("Validação Cruzada Estratificada em 5 Folds (5-Fold Stratified CV)\nRobustez Estatística e Generalização dos Classificadores",
+              fontsize=12, fontweight="bold", pad=16, color="#0f172a")
+    plt.tight_layout()
+    out_path = os.path.join(RESULTS_DIR, "grafico_cross_validation_kfold.png")
+    plt.savefig(out_path, dpi=300, bbox_inches="tight")
+    plt.close()
+    print(f"[OK] Gráfico de validação cruzada salvo em: {out_path}")
+
 if __name__ == "__main__":
     generate_radar_chart()
     generate_stress_test_chart()
+    generate_kfold_chart()
+

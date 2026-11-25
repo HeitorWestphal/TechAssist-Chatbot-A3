@@ -327,15 +327,29 @@ A avaliação experimental foi conduzida sobre um conjunto formal de 25 testes n
 
 ---
 
-## 👥 10. Autoria e Contribuições da Equipe
+## 👥 10. Integrantes e Divisão das Funcionalidades
 
-* **Heitor Westphal:** Engenharia de PLN, implementação do classificador TF-IDF e Regressão Logística, cálculo de similaridade de cossenos, calibração matemática do limiar de fallback, benchmark comparativo das 4 arquiteturas, algoritmo de Levenshtein e orquestração conversacional (`src/intent_classifier.py`, `src/nlp_preprocessor.py`, `src/bot_engine.py`, `src/benchmark.py`).
-* **Integrante 2 (Dados e Curadoria):** Levantamento dos requisitos operacionais de TI N1, estruturação da base de conhecimento JSON com 8 intenções e montagem do dataset supervisionado (`data/knowledge_base.json`, `data/training_dataset.csv`).
-* **Integrante 3 (Testes e Avaliação):** Elaboração dos 25 casos de teste (R5), script automatizado de avaliação, cálculo de matriz de confusão e métricas estatísticas (`data/test_dataset.csv`, `src/evaluate.py`, `results/`).
-* **Integrante 4 (Interface e Documentação):** Desenvolvimento da interface Web Flask responsiva, integração do painel de telemetria analítica com Chart.js, elaboração da planilha executiva e redação do relatório técnico formal (`src/app_web.py`, `src/templates/index.html`, `docs/`).
+| Nome Completo | RA | Papel na Equipe | Perfil GitHub |
+| :--- | :---: | :--- | :--- |
+| **Heitor Della Barba Westphal** | 1072410915 | Líder de Equipe / Engenharia de PLN e Arquitetura de IA | [@HeitorWestphal](https://github.com/HeitorWestphal) |
+| **Bruno Hudson Siebert Costa** | 1072419878 | Engenharia de Dados, Persistência Relacional SQLite e DevOps | [@BHSC1](https://github.com/BHSC1) |
+| **Ian Santiago Silveira** | 1072410937 | Motor de Diálogo Conversacional e Gestão de Sessões Multi-Turnos | [@SantiagoIanS](https://github.com/SantiagoIanS) |
+| **João Víctor Muniz da Silva** | 1072413992 | API RESTful Corporativa, Swagger UI e Validação Experimental | [@Muniz2504](https://github.com/Muniz2504) |
+
+> **Metodologia de Trabalho Colaborativo:** Todos os integrantes atuam diretamente como programadores e desenvolvem a implementação e a suite de testes unitários das suas respectivas frentes. O guia completo de contribuição, branches e pull requests está disponível em [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### 🛠️ Rastreabilidade de Módulos e Testes por Integrante
+
+| Aluno | Módulos e Funcionalidades Implementadas | Testes Automatizados (PyTest) | Branch Dedicada |
+| :--- | :--- | :--- | :--- |
+| **Heitor Della Barba Westphal** | • Vetorização TF-IDF n-grams (1, 2) e calibração de Fallback<br>• Corretor de digitação por distância de Levenshtein<br>• Benchmark comparativo de 4 modelos e validação cruzada 5-Fold<br>• Arquivos: [nlp_preprocessor.py](src/nlp_preprocessor.py), [intent_classifier.py](src/intent_classifier.py), [benchmark.py](src/benchmark.py), [generate_advanced_charts.py](src/generate_advanced_charts.py) | [test_nlp_preprocessor.py](tests/test_nlp_preprocessor.py)<br>[test_intent_classifier.py](tests/test_intent_classifier.py) | `main` |
+| **Bruno Hudson Siebert Costa** | • Modelagem relacional e governança de dados ITIL v4<br>• Persistência de incidentes e chamados N2 (`#TK-XXXXX`)<br>• CRUD com auditoria e transição de status (Aberto / Resolvido)<br>• Arquivos: [database.py](src/database.py), [techassist.db](data/techassist.db) | [test_database.py](tests/test_database.py) | `feat/database-sqlite-itil` |
+| **Ian Santiago Silveira** | • Motor de diálogo conversacional e sessões ativas<br>• Máquina de estados para coleta multi-turnos de incidentes N2<br>• Curadoria da base de conhecimento semiestruturada (8 intenções)<br>• Arquivos: [bot_engine.py](src/bot_engine.py), [knowledge_base.json](data/knowledge_base.json), [training_dataset.csv](data/training_dataset.csv) | [test_bot_engine.py](tests/test_bot_engine.py) | `feat/dialogue-engine-multiturn` |
+| **João Víctor Muniz da Silva** | • API RESTful Flask para integração corporativa ITSM<br>• Especificação OpenAPI 3.0 e Swagger UI interativo (`/docs`)<br>• Live Test Runner da suite de 25 testes em tempo real<br>• Interface web moderna com telemetria Chart.js<br>• Arquivos: [app_web.py](src/app_web.py), [openapi.yaml](docs/openapi.yaml), [index.html](src/templates/index.html), [evaluate.py](src/evaluate.py) | [test_api_endpoints.py](tests/test_api_endpoints.py) | `feat/api-rest-swagger-runner` |
 
 ---
 
 ## 📜 11. Declaração de Autoria e Integridade Acadêmica
 
-Declara-se expressamente que todo o código-fonte, pipeline de pré-processamento de linguagem natural, arquitetura do classificador supervisionado, base de conhecimento curada, experimentos comparativos de benchmark, curvas de sensibilidade paramétrica, projeções de PCA e documentação técnica foram integralmente concebidos, desenvolvidos e validados pelos integrantes da equipe, em estrito cumprimento às normas acadêmicas e aos critérios avaliativos da disciplina de Inteligência Artificial.
+Declara-se expressamente que todo o código-fonte, pipeline de pré-processamento de linguagem natural, arquitetura do classificador supervisionado, base de conhecimento curada, experimentos comparativos de benchmark, curvas de sensibilidade paramétrica, projeções de PCA, validação cruzada 5-Fold, banco de dados relacional e documentação técnica foram integralmente concebidos, desenvolvidos e validados pelos integrantes da equipe (**Heitor Della Barba Westphal, Bruno Hudson Siebert Costa, Ian Santiago Silveira e João Víctor Muniz da Silva**), em estrito cumprimento às normas acadêmicas e aos critérios avaliativos da disciplina de Inteligência Artificial.
+

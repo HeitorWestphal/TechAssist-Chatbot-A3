@@ -1,0 +1,35 @@
+{
+  "Opção B1: Naive Bayes": {
+    "scores_por_fold": [
+      81.82,
+      72.73,
+      72.73,
+      59.09,
+      63.64
+    ],
+    "media_acuracia": 70.0,
+    "desvio_padrao": 7.93
+  },
+  "Opção B2: Linear SVM": {
+    "scores_por_fold": [
+      86.36,
+      72.73,
+      86.36,
+      72.73,
+      68.18
+    ],
+    "media_acuracia": 77.27,
+    "desvio_padrao": 7.61
+  },
+  "Opção C: TechAssist (LogReg)": {
+    "scores_por_fold": [
+      86.36,
+      72.73,
+      86.36,
+      72.73,
+      68.18
+    ],
+    "media_acuracia": 77.27,
+    "desvio_padrao": 7.61
+  }
+}

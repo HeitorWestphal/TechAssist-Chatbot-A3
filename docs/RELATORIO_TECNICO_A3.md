@@ -5,7 +5,11 @@ DISCIPLINA DE INTELIGÊNCIA ARTIFICIAL — AVALIAÇÃO A3 (40 PONTOS)
 # TECHASSIST: DESENVOLVIMENTO DE UM CHATBOT DE TRIAGEM E SUPORTE DE TI NÍVEL 1 COM PROCESSAMENTO DE LINGUAGEM NATURAL E BENCHMARK CIENTÍFICO DE ARQUITETURAS
 
 Equipe: TechAssist AI Solutions
-Autores: Heitor Westphal (Desenvolvimento IA/PLN e Arquitetura) e Equipe
+Autores:
+• Heitor Della Barba Westphal (RA: 1072410915) — Líder de Equipe / Engenharia de PLN e Arquitetura de IA (@HeitorWestphal)
+• Bruno Hudson Siebert Costa (RA: 1072419878) — Engenharia de Dados, Persistência Relacional SQLite e DevOps (@BHSC1)
+• Ian Santiago Silveira (RA: 1072410937) — Motor de Diálogo Conversacional e Gestão de Sessões Multi-Turnos (@SantiagoIanS)
+• João Víctor Muniz da Silva (RA: 1072413992) — API RESTful Corporativa, Swagger UI e Validação Experimental (@Muniz2504)
 Repositório: https://github.com/HeitorWestphal/TechAssist-Chatbot-A3
 Data de Entrega: Novembro de 2026
 
