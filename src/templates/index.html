@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechAssist AI - Helpdesk de TI N1</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .chat-bubble-user {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-bubble-bot {
+      background: #ffffff;
+      color: #1e293b;
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 h-screen flex flex-col font-sans">
+
+  <!-- Header Superior -->
+  <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-200">
+        <i class="fa-solid fa-headset"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="font-bold text-slate-800 text-lg">TechAssist AI</h1>
+          <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700 rounded-full flex items-center">
+            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5 animate-pulse"></span> Online
+          </span>
+          <span class="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
+            Modelo TF-IDF + PLN Híbrido
+          </span>
+        </div>
+        <p class="text-xs text-slate-500">Central de Suporte Técnico & Helpdesk N1 • Projeto A3 Inteligência Artificial</p>
+      </div>
+    </div>
+
+    <!-- Controles de Cabeçalho -->
+    <div class="flex items-center space-x-3">
+      <button onclick="toggleModal('modalInfo')" class="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition flex items-center space-x-1">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Sobre a IA (R3)</span>
+      </button>
+      <button onclick="resetConversation()" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition flex items-center space-x-1">
+        <i class="fa-solid fa-rotate-right"></i>
+        <span>Reiniciar Sessão</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Container Principal -->
+  <div class="flex-1 max-w-5xl w-full mx-auto p-4 flex flex-col overflow-hidden">
+    <!-- Janela de Chat -->
+    <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 p-4 custom-scrollbar">
+      <!-- Mensagem de Boas-Vindas Inicial -->
+      <div class="flex items-start space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm shrink-0">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="max-w-xl">
+          <div class="chat-bubble-bot p-4 rounded-2xl text-sm border border-slate-200 whitespace-pre-line leading-relaxed">
+Olá! Sou o **TechAssist**, seu assistente virtual de Suporte e Helpdesk de TI Nível 1.
+
+Posso te ajudar com:
+• Redefinição de senha ou conta bloqueada
+• Problemas de conexão e token na VPN
+• Lentidão, travamento e diagnóstico do computador
+• Solicitação de instalação de programas homologados
+• Horários de atendimento e abertura de chamados técnicos
+
+Como posso ajudar você hoje?
+          </div>
+          <div class="mt-2 flex flex-wrap gap-1.5">
+            <button onclick="sendQuickMessage('Esqueci minha senha')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🔑 Esqueci minha senha</button>
+            <button onclick="sendQuickMessage('Minha VPN não quer conectar')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🌐 VPN não conecta</button>
+            <button onclick="sendQuickMessage('Meu computador está muito lento')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">⚡ Computador lento</button>
+            <button onclick="sendQuickMessage('Quero abrir um chamado')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🎫 Abrir chamado N2</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicador de Digitando (oculto por padrão) -->
+    <div id="typingIndicator" class="hidden flex items-center space-x-2 text-xs text-slate-400 px-4 py-2">
+      <i class="fa-solid fa-circle-notch fa-spin text-blue-500"></i>
+      <span>TechAssist processando entrada via PLN...</span>
+    </div>
+
+    <!-- Barra de Input e Envio -->
+    <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-sm mt-2">
+      <form id="chatForm" onsubmit="handleSendMessage(event)" class="flex items-center space-x-2">
+        <input 
+          id="messageInput" 
+          type="text" 
+          placeholder="Digite sua dúvida de suporte técnico (ex: 'Não consigo logar no Windows', 'Como instalar o VS Code')..." 
+          class="flex-1 px-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+          autocomplete="off"
+        />
+        <button 
+          type="submit" 
+          id="btnSend"
+          class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm rounded-xl transition flex items-center space-x-1.5 shadow-sm shadow-blue-200"
+        >
+          <span>Enviar</span>
+          <i class="fa-solid fa-paper-plane text-xs"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Informativo: Arquitetura e IA (R3 e R4) -->
+  <div id="modalInfo" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-200 overflow-y-auto max-h-[90vh]">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+          <i class="fa-solid fa-microchip text-blue-600"></i>
+          <span>Mecanismo Autoral de IA e PLN (Requisito R3)</span>
+        </h2>
+        <button onclick="toggleModal('modalInfo')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-4 text-xs text-slate-600 leading-relaxed">
+        <div>
+          <h3 class="font-bold text-slate-800 text-sm mb-1">1. Pipeline de Processamento de Linguagem Natural</h3>
+          <p>A entrada do usuário é processada por um pipeline modular que realiza:</p>
+          <ul class="list-disc ml-5 mt-1 space-y-1">
+            <li><strong>Normalização:</strong> conversão para minúsculas e remoção de marcas diacríticas/acentos via Unicode NFKD.</li>
+            <li><strong>Limpeza Regex:</strong> eliminação de ruídos e pontuações irrelevantes.</li>
+            <li><strong>Stopwords seletivas:</strong> filtragem de palavras gramaticais preservando núcleos semânticos de negação e dúvida.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-slate-800 text-sm mb-1">2. Vetorização e Modelo Preditivo</h3>
+          <p>O modelo utiliza <strong>TF-IDF com n-grams (1, 2)</strong> acoplado a um classificador supervisionado de <strong>Regressão Logística Calibrada</strong> e cálculo paralelo de <strong>Similaridade por Cosseno</strong>.</p>
+        </div>
+
+        <div>
+          <h3 class="font-bold text-slate-800 text-sm mb-1">3. Mecanismo de Confiança e Fallback</h3>
+          <p>Para evitar respostas errôneas ou alucinações, o sistema calcula uma métrica híbrida de confiança: <code>Confiança = 0.65 × P(modelo) + 0.35 × Cosseno</code>. Se o valor for inferior ao <strong>limiar operacional de 0.38</strong>, o sistema aciona fallback controlado, convidando o usuário a reformular ou abrindo um ticket de suporte N2.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-3 border-t border-slate-100 flex justify-end">
+        <button onclick="toggleModal('modalInfo')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-medium hover:bg-blue-700">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sessionId = "web_session_" + Math.random().toString(36).substring(2, 9);
+
+    function toggleModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.toggle('hidden');
+    }
+
+    function sendQuickMessage(text) {
+      document.getElementById('messageInput').value = text;
+      document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+    }
+
+    async function handleSendMessage(event) {
+      event.preventDefault();
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+      appendUserMessage(text);
+
+      const indicator = document.getElementById('typingIndicator');
+      indicator.classList.remove('hidden');
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, session_id: sessionId })
+        });
+        const data = await response.json();
+        indicator.classList.add('hidden');
+        appendBotMessage(data);
+      } catch (err) {
+        indicator.classList.add('hidden');
+        appendBotMessage({
+          resposta: "⚠️ Erro de conexão com a central de IA. Por favor, tente novamente.",
+          intencao: "erro_servidor",
+          confianca: 0.0,
+          is_fallback: true
+        });
+      }
+    }
+
+    function appendUserMessage(text) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = "flex justify-end space-x-2";
+      div.innerHTML = `
+        <div class="max-w-md">
+          <div class="chat-bubble-user px-4 py-2.5 rounded-2xl text-sm shadow-sm">
+            ${escapeHtml(text)}
+          </div>
+          <span class="text-[10px] text-slate-400 block text-right mt-1">Agora</span>
+        </div>
+      `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function appendBotMessage(data) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = "flex items-start space-x-3";
+
+      const confidencePercent = (data.confianca * 100).toFixed(1);
+      const isFallback = data.is_fallback;
+      const badgeColor = isFallback ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700";
+      const icon = isFallback ? "fa-triangle-exclamation" : "fa-brain";
+
+      let suggestionsHtml = "";
+      if (data.acoes_sugeridas && data.acoes_sugeridas.length > 0) {
+        suggestionsHtml = `<div class="mt-2 flex flex-wrap gap-1.5">` + 
+          data.acoes_sugeridas.map(s => 
+            `<button onclick="sendQuickMessage('${escapeHtml(s)}')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">${escapeHtml(s)}</button>`
+          ).join('') + `</div>`;
+      }
+
+      div.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm shrink-0 mt-0.5">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="max-w-xl">
+          <div class="chat-bubble-bot p-4 rounded-2xl text-sm border border-slate-200 whitespace-pre-line leading-relaxed">
+            ${formatMarkdown(data.resposta)}
+          </div>
+          
+          <div class="flex items-center space-x-2 mt-1.5 text-[11px] text-slate-400">
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold ${badgeColor} flex items-center space-x-1">
+              <i class="fa-solid ${icon}"></i>
+              <span>Intenção: ${data.intencao} (${confidencePercent}%)</span>
+            </span>
+            ${data.protocolo ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700">Ticket #${data.protocolo}</span>` : ''}
+          </div>
+
+          ${suggestionsHtml}
+        </div>
+      `;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function resetConversation() {
+      await fetch('/api/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId })
+      });
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = `
+        <div class="p-3 bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-xl text-center">
+          Sessão reiniciada com sucesso. O histórico de contexto foi limpo.
+        </div>
+      `;
+      setTimeout(() => sendQuickMessage('olá'), 400);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function formatMarkdown(text) {
+      // Formatação simples de negrito e links/código
+      let formatted = text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`(.*?)`/g, '<code class="bg-slate-100 px-1 py-0.5 rounded font-mono text-xs text-blue-600">$1</code>');
+      return formatted;
+    }
+  </script>
+</body>
+</html>

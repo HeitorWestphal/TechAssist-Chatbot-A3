@@ -1,0 +1,111 @@
+texto,intencao
+"olá",saudacao
+"oi",saudacao
+"bom dia",saudacao
+"boa tarde",saudacao
+"boa noite",saudacao
+"ola tudo bem",saudacao
+"e aí assistente",saudacao
+"preciso de ajuda",saudacao
+"gostaria de tirar uma duvida",saudacao
+"oi me ajuda aqui por favor",saudacao
+"ola suporte de ti",saudacao
+"iniciar atendimento",saudacao
+"esqueci minha senha do computador",redefinicao_senha
+"como redefinir a minha senha de rede",redefinicao_senha
+"minha senha expirou e nao consigo entrar",redefinicao_senha
+"minha conta do windows esta bloqueada",redefinicao_senha
+"como trocar a senha do email institucional",redefinicao_senha
+"perdi o acesso a minha conta preciso de uma nova senha",redefinicao_senha
+"esqueci a senha do portal do colaborador",redefinicao_senha
+"nao lembro minha senha de login",redefinicao_senha
+"bloqueei meu usuario por excesso de tentativas de senha",redefinicao_senha
+"onde posso alterar minha senha de acesso",redefinicao_senha
+"procedimento para recuperar a senha corporativa",redefinicao_senha
+"como resetar a senha do active directory",redefinicao_senha
+"quero mudar minha senha do office 365",redefinicao_senha
+"minha vpn nao quer conectar",problema_vpn_acesso
+"erro ao conectar na vpn da empresa",problema_vpn_acesso
+"o forticlient da erro de autenticacao",problema_vpn_acesso
+"minha vpn desconecta toda hora",problema_vpn_acesso
+"nao consigo acessar a rede interna de casa pela vpn",problema_vpn_acesso
+"vpn esta caindo o tempo todo no home office",problema_vpn_acesso
+"erro de gateway ou certificado na vpn anyconnect",problema_vpn_acesso
+"o token mfa da vpn nao esta sendo aceito",problema_vpn_acesso
+"problema de login na vpn corporativa",problema_vpn_acesso
+"como configurar o cliente de vpn no notebook",problema_vpn_acesso
+"nao estou conseguindo acessar as pastas da rede pela vpn",problema_vpn_acesso
+"vpn fica em conectando e nunca conecta",problema_vpn_acesso
+"erro de timeout na conexao vpn",problema_vpn_acesso
+"meu computador esta muito lento hoje",lentidao_sistema
+"o notebook esta travando ao abrir programas",lentidao_sistema
+"memoria ram e cpu em 100 por cento no gerenciador de tarefas",lentidao_sistema
+"o sistema esta demorando muito para carregar",lentidao_sistema
+"meu pc esta travando toda hora",lentidao_sistema
+"como acelerar meu computador que esta travando",lentidao_sistema
+"disco c esta cheio e o windows ficou muito lento",lentidao_sistema
+"tela azul ou computador congelando do nada",lentidao_sistema
+"o computador demora 10 minutos para iniciar",lentidao_sistema
+"navegador trava quando abro tres abas",lentidao_sistema
+"aplicativos nao respondem e a maquina congela",lentidao_sistema
+"como liberar espaco e limpar o computador lento",lentidao_sistema
+"como faco para instalar o vs code na minha maquina",instalacao_software
+"preciso que instalem o pacote office 365",instalacao_software
+"solicitar instalacao de software homologado",instalacao_software
+"como baixar programas pelo software center",instalacao_software
+"preciso de permissao de administrador para instalar um aplicativo",instalacao_software
+"quero instalar o docker desktop e o dbeaver",instalacao_software
+"onde acho o catalogo de programas para download corporativo",instalacao_software
+"solicitacao de licenca para novo programa de trabalho",instalacao_software
+"como instalar o teams e o slack no computador da empresa",instalacao_software
+"preciso atualizar o navegador google chrome",instalacao_software
+"como solicitar a instalacao do adobe acrobat reader",instalacao_software
+"software center nao esta abrindo para instalar aplicativos",instalacao_software
+"gostaria de abrir um chamado tecnico",abertura_chamado
+"quero falar com um atendente humano do suporte",abertura_chamado
+"favor abrir ticket para o nivel dois",abertura_chamado
+"preciso encaminhar meu problema para o time de suporte",abertura_chamado
+"como faco para abrir um ticket de ti",abertura_chamado
+"quero registrar um chamado no helpdesk",abertura_chamado
+"o problema nao foi resolvido preciso de atendimento presencial",abertura_chamado
+"abrir chamado urgente meu computador quebrou",abertura_chamado
+"encaminhar para suporte humano",abertura_chamado
+"gerar protocolo de atendimento com um tecnico",abertura_chamado
+"quero falar com um suporte n2 agora",abertura_chamado
+"qual o horario de atendimento do suporte de ti",horario_suporte
+"o suporte funciona nos finais de semana",horario_suporte
+"ate que horas a equipe de ti atende",horario_suporte
+"existe plantao de suporte no sabado ou domingo",horario_suporte
+"qual o telefone ou ramal do plantao de ti",horario_suporte
+"qual o expediente da central de helpdesk",horario_suporte
+"quando abre o atendimento humano da ti",horario_suporte
+"qual o cardapio do restaurante da firma hoje",fora_escopo
+"quanto custa uma camisa polo na loja",fora_escopo
+"qual a previsao do tempo para amanha em sao paulo",fora_escopo
+"como faco para cozinhar macarrao ao molho branco",fora_escopo
+"voce sabe me dizer quem ganhou o jogo de futebol ontem",fora_escopo
+"qual e a capital da franca",fora_escopo
+"quero comprar uma passagem aerea de ferias",fora_escopo
+"me conta uma piada engraçada",fora_escopo
+"quanto custa o metro quadrado de aluguel",fora_escopo
+"como pedir reembolso de vale transporte no rh",fora_escopo
+"quem foi o primeiro presidente do brasil",fora_escopo
+"onde fica o restaurante mais proximo",fora_escopo
+"meu computador ta lerdo demais",lentidao_sistema
+"maquina muito lenta pra carregar programas",lentidao_sistema
+"sistema demorando uma vida pra abrir",lentidao_sistema
+"notebook travando o tempo todo",lentidao_sistema
+"esqueci minha combinacao de acesso do windows",redefinicao_senha
+"como trocar chave de login corporativa",redefinicao_senha
+"redefinir credenciais de acesso",redefinicao_senha
+"falar com pessoa do suporte de ti",abertura_chamado
+"preciso de atendente humano do helpdesk",abertura_chamado
+"transferir para atendimento humano",abertura_chamado
+"atendimento do helpdesk no fim de semana",horario_suporte
+"plantao de suporte no sabado e domingo",horario_suporte
+"horarios do plantao de suporte",horario_suporte
+"baixar novo programa de desenvolvimento na maquina",instalacao_software
+"preciso do pacote office no meu notebook",instalacao_software
+"instalar aplicativo homologado pela empresa",instalacao_software
+"computador parou de funcionar e travou",lentidao_sistema
+"acesso ao sistema caiu pela manha",problema_vpn_acesso

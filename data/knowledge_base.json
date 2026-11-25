@@ -1,0 +1,77 @@
+{
+  "empresa": "TechAssist Corp - Central de Serviços de TI",
+  "versao_base": "1.0.0",
+  "intencoes": {
+    "saudacao": {
+      "titulo": "Atendimento e Boas-Vindas",
+      "resposta": "Olá! Sou o TechAssist, seu assistente virtual de Suporte e Helpdesk de TI Nível 1. Posso te ajudar com:\n• Redefinição e desbloqueio de senhas corporativas\n• Configuração e erros de conexão na VPN\n• Diagnóstico de lentidão no computador\n• Instalação de softwares homologados\n• Horários da central e abertura de chamados técnicos\n\nComo posso ajudar você hoje?",
+      "acoes_sugeridas": [
+        "Esqueci minha senha",
+        "VPN não conecta",
+        "Meu PC está muito lento",
+        "Instalar novo programa",
+        "Abrir um chamado"
+      ]
+    },
+    "redefinicao_senha": {
+      "titulo": "Redefinição e Desbloqueio de Senhas",
+      "resposta": "Para redefinir ou desbloquear sua senha de rede (Windows/AD, E-mail e Portal do Colaborador):\n\n1. Acesse o portal de autoatendimento: https://senha.empresa.local (disponível dentro e fora da rede).\n2. Clique em 'Esqueci minha senha' e insira seu e-mail corporativo.\n3. Digite o código de 6 dígitos enviado ao seu aplicativo autenticador ou SMS cadastrado.\n4. Cadastre uma nova senha com no mínimo 8 caracteres (contendo letra maiúscula, minúscula, número e caractere especial).\n\nCaso sua conta esteja bloqueada por excesso de tentativas ou seu MFA não esteja acessível, digite 'abrir chamado' para transferirmos ao suporte N2.",
+      "acoes_sugeridas": [
+        "Minha conta está bloqueada",
+        "Não recebi o código MFA",
+        "Abrir um chamado"
+      ]
+    },
+    "problema_vpn_acesso": {
+      "titulo": "Suporte a Acesso Remoto e VPN",
+      "resposta": "Identificamos que você está com dificuldades de conexão na VPN corporativa. Siga este passo a passo para resolução rápida:\n\n1. Verifique se sua conexão doméstica com a internet está ativa navegando em qualquer site externo.\n2. No cliente VPN (FortiClient ou AnyConnect), confira se o gateway está configurado como 'vpn.empresa.com.br'.\n3. Confirme se suas credenciais estão corretas e sincronize o relógio do seu celular (descompasso de horário invalida o token MFA).\n4. Reinicie o aplicativo de VPN com privilégios de administrador ou reinicie seu computador.\n\nSe o erro persistir com código de falha de gateway ou certificado expirado, digite 'abrir chamado' com a mensagem de erro exata.",
+      "acoes_sugeridas": [
+        "Erro de token MFA inválido",
+        "Certificado VPN expirado",
+        "Abrir um chamado"
+      ]
+    },
+    "lentidao_sistema": {
+      "titulo": "Diagnóstico de Lentidão e Desempenho",
+      "resposta": "Para identificar e resolver lentidão no seu computador de trabalho:\n\n1. Pressione 'Ctrl + Shift + Esc' para abrir o Gerenciador de Tarefas e verifique se o uso de CPU, Memória ou Disco está em 100%.\n2. Na aba 'Processos', finalize abas pesadas do navegador ou aplicativos em segundo plano não utilizados.\n3. Verifique o espaço livre no disco C: (mantenha pelo menos 15 GB livres para arquivos temporários).\n4. Realize uma reinicialização completa da máquina (muitos updates do Windows e vazamentos de memória são corrigidos ao reiniciar).\n\nSe o computador continuar travando com tela azul ou ruídos no cooler/disco, digite 'abrir chamado' para diagnóstico de hardware.",
+      "acoes_sugeridas": [
+        "Disco C está cheio",
+        "Tela azul da morte (BSOD)",
+        "Abrir um chamado"
+      ]
+    },
+    "instalacao_software": {
+      "titulo": "Instalação e Atualização de Softwares",
+      "resposta": "Softwares homologados pela TI podem ser instalados sem senha de administrador:\n\n1. Abra o menu Iniciar e pesquise por 'Portal da Empresa' (ou 'Software Center').\n2. Localize o aplicativo desejado no catálogo oficial (ex: VS Code, Slack, Google Chrome, Power BI, Docker Desktop, Adobe Reader).\n3. Clique em 'Instalar' e aguarde o download silencioso e ativação da licença.\n\nSe você necessitar de um software não catalogado ou licença específica de engenharia/design, solicite a aprovação do seu gestor e digite 'abrir chamado' anexando a justificativa.",
+      "acoes_sugeridas": [
+        "Pedir licença de software pago",
+        "Software Center não abre",
+        "Abrir um chamado"
+      ]
+    },
+    "abertura_chamado": {
+      "titulo": "Abertura de Chamado Técnico N2",
+      "resposta": "Para encaminhar seu problema diretamente a um analista de suporte Nível 2 humano:\n\nPor favor, informe um breve resumo do ocorrido (com seu nome, setor e o código de erro, se houver). Você pode enviar os detalhes diretamente aqui no chat para que eu gere seu número de protocolo e registre o ticket em nossa fila de atendimento prioritário.",
+      "acoes_sugeridas": [
+        "Registrar incidente urgente",
+        "Acompanhar chamado existente"
+      ]
+    },
+    "horario_suporte": {
+      "titulo": "Canais e Horários de Atendimento",
+      "resposta": "A Central de Suporte e Helpdesk de TI funciona nos seguintes horários:\n\n• Atendimento Geral N1 e N2: Segunda a Sexta-feira, das 08h00 às 18h00.\n• Plantão de Incidentes Críticos (sistemas inoperantes / servidores fora): 24 horas por dia, 7 dias por semana pelo ramal emergencial 5555.\n• Chamados abertos via portal ou chatbot fora do horário comercial são enfileirados e atendidos no início do próximo dia útil por ordem de SLA.",
+      "acoes_sugeridas": [
+        "Ver catálogo de serviços",
+        "Abrir chamado fora do expediente"
+      ]
+    },
+    "fallback": {
+      "titulo": "Dúvida Não Compreendida ou Fora de Escopo",
+      "resposta": "Não consegui identificar com segurança a sua solicitação no escopo de Suporte e Helpdesk de TI Nível 1 (confiança abaixo do limiar operacional).\n\nPosso te ajudar com os seguintes temas:\n• Redefinição de senha ou conta bloqueada\n• Problemas com conexão e autenticação na VPN\n• Lentidão, travamento ou desempenho do computador\n• Instalação de softwares do catálogo corporativo\n• Horários de atendimento ou abertura de chamado técnico para analista humano.\n\nVocê gostaria de reformular sua pergunta ou prefere que eu abra um chamado técnico para nossa equipe de TI?",
+      "acoes_sugeridas": [
+        "Tentar reformular a pergunta",
+        "Abrir um chamado para a equipe humana"
+      ]
+    }
+  }
+}
