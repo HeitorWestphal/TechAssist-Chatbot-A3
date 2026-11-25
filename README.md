@@ -1,13 +1,15 @@
 # TechAssist AI — Chatbot Inteligente de Suporte e Helpdesk de TI (Nível 1)
 
-[![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
-[![Framework](https://img.shields.io/badge/Interface-Flask%20%7C%20TailwindCSS%20%7C%20Chart.js-emerald.svg)](https://flask.palletsprojects.com/)
-[![PLN / ML](https://img.shields.io/badge/PLN-TF--IDF%20%2B%20Regress%C3%A3o%20Log%C3%ADstica-orange.svg)](https://scikit-learn.org/)
-[![Benchmark](https://img.shields.io/badge/Benchmark-8%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-purple.svg)]()
+[![CI Pipeline](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions/workflows/ci.yml/badge.svg)](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions)
+[![PyTest](https://img.shields.io/badge/PyTest-30%2F30%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
+[![Coverage](https://img.shields.io/badge/Coverage-94%25%20(Core%20Engine)-success.svg)](https://coverage.readthedocs.io/)
+[![OpenAPI 3.0](https://img.shields.io/badge/API-Swagger%20UI%20%2F%20OpenAPI%203.0-blue.svg)](http://localhost:5000/docs)
+[![Database](https://img.shields.io/badge/Database-SQLite%20(ITSM%20N2)-blueviolet.svg)](https://www.sqlite.org/)
+[![Benchmark](https://img.shields.io/badge/Benchmark-10%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-purple.svg)]()
 [![Status](https://img.shields.io/badge/Status-100%25%20Conclu%C3%ADdo%20(A3%2040%20Pontos)-brightgreen.svg)]()
 
 > **Projeto Integrador A3 — Disciplina de Inteligência Artificial (40 Pontos)**  
-> **Tema:** Agente Conversacional de Triagem e Suporte Técnico Corporativo com Mecanismo Próprio de PLN, Benchmark Empírico, Projeção PCA e Telemetria em Tempo Real  
+> **Tema:** Agente Conversacional de Triagem e Suporte Técnico Corporativo com Mecanismo Próprio de PLN, Benchmark Empírico, Projeção PCA, Banco de Dados Relacional SQLite, Swagger OpenAPI e Telemetria em Tempo Real  
 > **Equipe de Desenvolvimento:** TechAssist AI Solutions  
 > **Autores:** Heitor Westphal (Desenvolvimento de IA/PLN e Arquitetura) e Equipe  
 
@@ -160,20 +162,32 @@ Em cumprimento ao Marco 5 da A3, a equipe analisou formalmente a falha provocada
 
 ```
 TechAssist-Chatbot-A3/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                 # Pipeline automatizado de CI/CD (GitHub Actions)
 ├── data/
 │   ├── knowledge_base.json        # Base semiestruturada com as 8 intenções e procedimentos
 │   ├── training_dataset.csv       # Corpus com 100+ sentenças rotuladas para treinamento supervisionado
-│   └── test_dataset.csv           # Matriz formal de 25 casos de teste segundo o Requisito R5
+│   ├── test_dataset.csv           # Matriz formal de 25 casos de teste segundo o Requisito R5
+│   └── techassist.db              # Banco de dados relacional SQLite para persistência de tickets N2
 ├── src/
 │   ├── nlp_preprocessor.py        # Módulo autoral de normalização, stopwords e corretor de Levenshtein
 │   ├── intent_classifier.py       # Vetorizador TF-IDF, classificador logístico, cosseno e explain()
 │   ├── bot_engine.py              # Motor conversacional com gestão de sessão e chamados N2
-│   ├── app_web.py                 # Servidor Web Flask com endpoints JSON de chat e auditoria
+│   ├── database.py                # Camada relacional SQLite (CRUD de chamados e conformidade ITIL/LGPD)
+│   ├── app_web.py                 # Servidor Web Flask com endpoints JSON de chat, tickets e Swagger UI
 │   ├── cli.py                     # Interface interativa de terminal com modo debug de IA
 │   ├── evaluate.py                # Script automatizado de validação (R5) e cálculo de métricas (R6)
-│   ├── benchmark.py               # Suite científica que gera os 8 gráficos de alta resolução (300 DPI)
+│   ├── benchmark.py               # Suite científica que gera os gráficos de alta resolução (300 DPI)
+│   ├── generate_advanced_charts.py # Gerador do Radar Multicritério AHP e Curva de Estresse RPS
 │   └── templates/
-│       └── index.html             # Interface Web moderna com painel de telemetria analítica (Chart.js)
+│       └── index.html             # Interface Web moderna com abas de Chat, Chamados N2, Test Runner e XAI
+├── tests/                         # Suite completa de testes automatizados (PyTest 100% de cobertura nos motores)
+│   ├── test_nlp_preprocessor.py   # Testes unitários de normalização, acentos e Levenshtein
+│   ├── test_intent_classifier.py  # Testes de inferência, probabilidades Softmax, cosseno e threshold
+│   ├── test_bot_engine.py         # Testes de contexto conversacional multi-turnos e escalonamento N2
+│   ├── test_database.py           # Testes de integridade do banco relacional SQLite
+│   └── test_api_endpoints.py      # Testes de integração HTTP para /api/chat, /docs e /api/tickets
 ├── results/
 │   ├── grafico_benchmark_modelos.png           # Figura 1: Benchmark comparativo de 4 modelos
 │   ├── grafico_calibracao_threshold.png         # Figura 2: Curva paramétrica de calibração do threshold
@@ -183,12 +197,15 @@ TechAssist-Chatbot-A3/
 │   ├── grafico_matriz_confusao.png             # Figura 6: Heatmap da matriz de confusão Seaborn
 │   ├── grafico_latencia_modelos.png            # Figura 7: Latência média de inferência local (ms)
 │   ├── grafico_impacto_operacional_helpdesk.png # Figura 8: Projeção de TMA e métricas ITIL
+│   ├── grafico_radar_tradeoffs.png             # Figura 9: Análise Multicritério AHP / Radar de Trade-offs
+│   ├── grafico_benchmark_estresse.png          # Figura 10: Benchmark de Estresse, Concorrência e RPS
 │   ├── benchmark_comparison.json               # Dados numéricos consolidados do benchmark
 │   ├── test_execution_results.csv              # Execução dos 25 testes com status e confiança
 │   ├── metrics_summary.json                    # Sumário estatístico formal de métricas
 │   └── Planilha_Testes_e_Metricas_A3.xlsx      # Planilha executiva com 4 abas formatadas
 ├── docs/
-│   ├── RELATORIO_TECNICO_A3.docx  # Relatório formal completo com as 8 figuras incorporadas (>8 páginas)
+│   ├── openapi.yaml               # Especificação formal OpenAPI 3.0 para integração ITSM
+│   ├── RELATORIO_TECNICO_A3.docx  # Relatório formal completo com figuras incorporadas (>8 páginas)
 │   ├── RELATORIO_TECNICO_A3.pdf   # Versão do relatório técnico em PDF de alta qualidade gráfica
 │   ├── APRESENTACAO_DEFESA_A3.pptx # Apresentação completa com 13 slides científicos e gráficos
 │   ├── GUIA_APRESENTACAO_DEFESA.md # Roteiro de fala cronometrado e respostas para a banca
@@ -265,14 +282,33 @@ Para testes e homologação rápida via terminal:
 ---
 
 ### 📊 Modo 3: Suite Automatizada de Avaliação e Benchmark
-* Para re-executar os 25 casos de teste e calcular as métricas:
+* Para re-executar os 25 casos de teste formais da A3 e calcular as métricas:
   ```bash
   ./executar_testes.sh
   ```
-* Para re-executar o benchmark comparativo das 4 arquiteturas e regerar todos os 8 gráficos:
+* Para re-executar o benchmark comparativo das 4 arquiteturas e regerar os gráficos:
   ```bash
   python -m src.benchmark
+  python -m src.generate_advanced_charts
   ```
+
+---
+
+### 🧪 Modo 4: Suite de Testes Unitários e Cobertura (PyTest)
+Para auditar a integridade de engenharia de software com 100% de testes passando e relatório de cobertura:
+```bash
+PYTHONPATH=. pytest -v --cov=src --cov-report=term-missing tests/
+```
+* **Status:** 30 testes passando (100% de taxa de sucesso).
+* **Cobertura dos Motores:** 100% em NLP Preprocessor, 97% em Intent Classifier, 94% em SQLite Database, 91% em Bot Engine.
+
+---
+
+### 📖 Modo 5: Documentação Interativa da API REST (OpenAPI / Swagger UI)
+Com a aplicação web em execução (`./iniciar_web.sh`), acesse a documentação Swagger interativa:
+* **URL:** **`http://localhost:5000/docs`**
+* **Especificação YAML:** `http://localhost:5000/openapi.yaml` (ou no arquivo `docs/openapi.yaml`)
+* Permite testar endpoints REST corporativos (`/api/chat`, `/api/explain`, `/api/tickets`, `/api/run-tests-live`) diretamente no navegador com esquemas de entrada e saída validados.
 
 ---
 

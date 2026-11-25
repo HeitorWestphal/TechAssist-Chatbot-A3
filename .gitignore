@@ -22,3 +22,5 @@ Thumbs.db
 # Temporary test / cache logs
 *.log
 .pytest_cache/
+.coverage
+

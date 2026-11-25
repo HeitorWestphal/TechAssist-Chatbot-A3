@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: TechAssist AI API — Central de Triagem N1
+  description: |
+    Especificação formal da API RESTful corporativa do TechAssist AI para integração com sistemas de ITSM (ServiceNow, Jira Service Management, Zendesk).
+    Fornece inferência de Processamento de Linguagem Natural (NLP), classificação probabilística de intenções, explicabilidade de tokens (XAI) e persistência relacional de chamados de suporte N2.
+  version: 1.0.0
+  contact:
+    name: Heitor Westphal & Equipe de Engenharia
+    email: heitordbw2006@gmail.com
+
+servers:
+  - url: http://localhost:5001
+    description: Servidor de Desenvolvimento Local
+
+paths:
+  /api/chat:
+    post:
+      summary: Enviar mensagem e obter resposta conversacional
+      description: |
+        Recebe uma mensagem de texto do usuário, aplica o pipeline de normalização textual (NFKD, remoção de acentos e stopwords), calcula a inferência híbrida (TF-IDF + Softmax + Similaridade de Cossenos) e retorna a resposta formatada da Base de Conhecimento ou ativa o fallback seguro caso o score fique abaixo do limiar calibrado (θ = 0.38).
+      operationId: processChat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: "Como faco para redefinir minha senha de rede?"
+                session_id:
+                  type: string
+                  default: "web_default"
+                  example: "sess_user_104"
+                apply_spellcheck:
+                  type: boolean
+                  default: false
+                  description: "Habilita a correção ortográfica dinâmica por distância de Levenshtein (d <= 2) contra o vocabulário canônico de TI."
+      responses:
+        '200':
+          description: Resposta processada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resposta:
+                    type: string
+                  intencao:
+                    type: string
+                    example: "redefinicao_senha"
+                  confianca:
+                    type: number
+                    format: float
+                    example: 0.845
+                  is_fallback:
+                    type: boolean
+                    example: false
+                  latencia_ms:
+                    type: number
+                    format: float
+                    example: 0.48
+                  todas_probabilidades:
+                    type: object
+                    additionalProperties:
+                      type: number
+        '400':
+          description: Requisição inválida (mensagem vazia)
+
+  /api/explain:
+    get:
+      summary: Explicabilidade e Atribuição de Tokens TF-IDF (XAI)
+      description: |
+        Inspeciona a sentença do usuário e extrai as features n-gramas ativadas no vocabulário vetorial, acompanhadas dos seus respectivos pesos TF-IDF normalizados.
+      operationId: explainQuery
+      parameters:
+        - name: text
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "minha vpn forticlient nao conecta"
+      responses:
+        '200':
+          description: Atribuição de importância dos tokens
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  texto_original:
+                    type: string
+                  texto_normalizado:
+                    type: string
+                  termos_tfidf_encontrados:
+                    type: object
+                    additionalProperties:
+                      type: number
+
+  /api/tickets:
+    get:
+      summary: Listar chamados de suporte técnico persistidos (SQLite)
+      description: Recupera os incidentes de N2 gerados no atendimento, permitindo filtro por status.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ABERTO, EM_ATENDIMENTO, RESOLVIDO]
+      responses:
+        '200':
+          description: Lista de chamados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  tickets:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        protocolo:
+                          type: string
+                        solicitante:
+                          type: string
+                        departamento:
+                          type: string
+                        descricao:
+                          type: string
+                        intencao_detectada:
+                          type: string
+                        confianca_ia:
+                          type: number
+                        status:
+                          type: string
+                        prioridade:
+                          type: string
+                        data_criacao:
+                          type: string
+                        data_resolucao:
+                          type: string
+
+  /api/tickets/{protocolo}/status:
+    post:
+      summary: Atualizar status de um chamado
+      parameters:
+        - name: protocolo
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "TK-10842"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [ABERTO, EM_ATENDIMENTO, RESOLVIDO]
+      responses:
+        '200':
+          description: Status atualizado com sucesso
+        '404':
+          description: Protocolo não encontrado
+
+  /api/run-tests-live:
+    post:
+      summary: Execução interativa da suite de 25 testes
+      description: |
+        Dispara em tempo real a validação dos 25 casos de teste formais da A3 contra o modelo ativo, retornando acurácia global, taxa de fallback e relatório individual.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                apply_spellcheck:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Resultados da avaliação automatizada

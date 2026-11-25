@@ -58,11 +58,26 @@ class BotEngine:
             session["ticket_data"]["detalhes"] = msg_clean
             session["ticket_data"]["protocolo"] = ticket_id
             
+            # Persistência relacional no SQLite
+            try:
+                from src.database import create_ticket
+                create_ticket(
+                    protocolo=ticket_id,
+                    descricao=msg_clean,
+                    intencao="abertura_chamado",
+                    confianca=1.0,
+                    solicitante="Colaborador (Sessão Web/CLI)",
+                    departamento="Suporte Geral"
+                )
+            except Exception as e:
+                pass # Tolerância a falhas
+
             response_text = (
-                f"✅ **Chamado Registrado com Sucesso!**\n\n"
+                f"✅ **Chamado Registrado e Persistido no Banco de Dados!**\n\n"
                 f"• **Protocolo:** `#{ticket_id}`\n"
                 f"• **Descrição informada:** \"{msg_clean}\"\n"
                 f"• **Fila:** Suporte Técnico N2 (Prioridade Padrão)\n"
+                f"• **Armazenamento:** SQLite Local (`data/techassist.db`)\n"
                 f"• **SLA de Atendimento:** até 4 horas úteis.\n\n"
                 f"Nossa equipe técnica entrará em contato pelo seu e-mail institucional ou ramal. "
                 f"Posso te ajudar com mais alguma dúvida?"

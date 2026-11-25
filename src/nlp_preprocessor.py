@@ -58,18 +58,21 @@ def levenshtein_distance(s1: str, s2: str) -> int:
 
 def correct_word(word: str, max_dist: int = 2) -> str:
     """Corrige palavras com erros tipográficos buscando o termo mais próximo no vocabulário."""
-    if word in CANONICAL_IT_VOCAB or len(word) <= 3:
+    if word in CANONICAL_IT_VOCAB or len(word) <= 3 or word in STOPWORDS_PT:
         return word
     
+    # Calibra a tolerância de edição de acordo com a extensão da palavra
+    allowed_dist = 1 if len(word) <= 5 else max_dist
+    
     best_match = word
-    min_d = max_dist + 1
+    min_d = allowed_dist + 1
     for term in CANONICAL_IT_VOCAB:
-        if abs(len(term) - len(word)) <= max_dist:
+        if abs(len(term) - len(word)) <= allowed_dist:
             d = levenshtein_distance(word, term)
             if d < min_d:
                 min_d = d
                 best_match = term
-    return best_match if min_d <= max_dist else word
+    return best_match if min_d <= allowed_dist else word
 
 def clean_text(text: str, remove_stops: bool = True, apply_spellcheck: bool = False) -> str:
     """
@@ -77,8 +80,8 @@ def clean_text(text: str, remove_stops: bool = True, apply_spellcheck: bool = Fa
     1. Converte para minúsculas.
     2. Remove acentuação (NFKD).
     3. Remove pontuação e caracteres não alfanuméricos via Regex.
-    4. Opcionalmente corrige erros de digitação via distância de Levenshtein.
-    5. Opcionalmente remove stopwords mantendo o núcleo semântico.
+    4. Opcionalmente remove stopwords mantendo o núcleo semântico.
+    5. Opcionalmente corrige erros de digitação via distância de Levenshtein.
     """
     if not text or not isinstance(text, str):
         return ""
@@ -88,11 +91,11 @@ def clean_text(text: str, remove_stops: bool = True, apply_spellcheck: bool = Fa
     text = re.sub(r'[^a-z0-9\s]', ' ', text)
     tokens = text.split()
 
-    if apply_spellcheck:
-        tokens = [correct_word(t) for t in tokens]
-
     if remove_stops:
         tokens = [t for t in tokens if t not in STOPWORDS_PT and len(t) > 1]
+
+    if apply_spellcheck:
+        tokens = [correct_word(t) for t in tokens]
         
     return " ".join(tokens)
 
