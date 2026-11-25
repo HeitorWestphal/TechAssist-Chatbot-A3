@@ -73,14 +73,20 @@ def get_ticket_by_protocol(protocolo: str) -> Optional[Dict[str, Any]]:
         row = cursor.fetchone()
         return dict(row) if row else None
 
-def list_tickets(status: Optional[str] = None) -> List[Dict[str, Any]]:
+def list_tickets(status: Optional[str] = None, prioridade: Optional[str] = None) -> List[Dict[str, Any]]:
     init_db()
     with get_connection() as conn:
         cursor = conn.cursor()
+        query = "SELECT * FROM tickets WHERE 1=1"
+        params = []
         if status:
-            cursor.execute("SELECT * FROM tickets WHERE status = ? ORDER BY id DESC", (status,))
-        else:
-            cursor.execute("SELECT * FROM tickets ORDER BY id DESC")
+            query += " AND status = ?"
+            params.append(status)
+        if prioridade:
+            query += " AND prioridade = ?"
+            params.append(prioridade)
+        query += " ORDER BY id DESC"
+        cursor.execute(query, params)
         rows = cursor.fetchall()
         return [dict(r) for r in rows]
 
