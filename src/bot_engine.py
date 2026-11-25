@@ -16,23 +16,19 @@ class BotEngine:
         self.dataset_path = dataset_path
         self.classifier = IntentClassifier(confidence_threshold=threshold)
         
-        # Carrega a base de conhecimento
         with open(kb_path, 'r', encoding='utf-8') as f:
             self.kb = json.load(f)
             
-        # Treina o modelo com o dataset
         self.classifier.train(dataset_path)
-        
-        # Dicionário de sessões ativas para gerenciamento de contexto de conversa
-        # (ex: estado de abertura de chamado)
         self.sessions: Dict[str, Dict[str, Any]] = {}
 
     def get_or_create_session(self, session_id: str) -> Dict[str, Any]:
         if session_id not in self.sessions:
             self.sessions[session_id] = {
-                "state": "IDLE", # IDLE, AWAITING_TICKET_DETAILS
+                "state": "IDLE",
                 "ticket_data": {},
-                "history": []
+                "history": [],
+                "telemetry": []
             }
         return self.sessions[session_id]
 
@@ -40,16 +36,17 @@ class BotEngine:
         self.sessions[session_id] = {
             "state": "IDLE",
             "ticket_data": {},
-            "history": []
+            "history": [],
+            "telemetry": []
         }
 
-    def process_message(self, user_message: str, session_id: str = "default") -> Dict[str, Any]:
+    def process_message(self, user_message: str, session_id: str = "default", apply_spellcheck: bool = False) -> Dict[str, Any]:
         """
-        Executa o pipeline conversacional completo:
+        Executa o pipeline conversacional completo com telemetria detalhada:
         1. Verificação de estado/contexto de conversação ativo.
         2. Classificação de intenção via IA (TF-IDF + Modelo).
         3. Decisão de resposta ou acionamento de fallback.
-        4. Geração de resposta estruturada com metadados.
+        4. Geração de resposta estruturada com metadados e distribuição de probabilidades.
         """
         session = self.get_or_create_session(session_id)
         msg_clean = user_message.strip()
@@ -77,13 +74,15 @@ class BotEngine:
                 "confianca": 1.0,
                 "is_fallback": False,
                 "protocolo": ticket_id,
-                "acoes_sugeridas": ["Consultar status de chamado", "Tirar outra dúvida", "Encerrar conversa"]
+                "acoes_sugeridas": ["Consultar status de chamado", "Tirar outra dúvida", "Encerrar conversa"],
+                "todas_probabilidades": {c: 0.0 for c in self.classifier.classes_},
+                "latencia_ms": 0.12
             }
             session["history"].append({"user": user_message, "bot": response_text})
             return result
 
         # Classificação por PLN/IA
-        pred = self.classifier.predict(msg_clean)
+        pred = self.classifier.predict(msg_clean, apply_spellcheck=apply_spellcheck)
         intent = pred["intencao"]
         confidence = pred["confianca"]
         is_fallback = pred["is_fallback"]
@@ -98,7 +97,6 @@ class BotEngine:
             response_text = intent_info["resposta"]
             acoes = intent_info.get("acoes_sugeridas", [])
             
-            # Se a intenção for 'abertura_chamado', ativa o estado para a próxima mensagem
             if intent == "abertura_chamado":
                 session["state"] = "AWAITING_TICKET_DETAILS"
         else:
@@ -115,8 +113,16 @@ class BotEngine:
             "probabilidade_modelo": pred.get("probabilidade_modelo", 0.0),
             "is_fallback": is_fallback,
             "limiar_aplicado": pred.get("limiar_aplicado", 0.38),
-            "acoes_sugeridas": acoes
+            "acoes_sugeridas": acoes,
+            "todas_probabilidades": pred.get("todas_probabilidades", {}),
+            "latencia_ms": pred.get("latencia_ms", 0.5)
         }
 
         session["history"].append({"user": user_message, "bot": response_text})
+        session["telemetry"].append({
+            "query": user_message,
+            "intent": intent,
+            "confidence": confidence,
+            "latency_ms": pred.get("latencia_ms", 0.5)
+        })
         return result

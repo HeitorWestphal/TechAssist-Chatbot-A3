@@ -2,11 +2,13 @@
 Classificador de Intenções de PLN/IA para o TechAssist.
 Utiliza vetorização TF-IDF (Term Frequency - Inverse Document Frequency)
 combinada com Regressão Logística e similaridade de cossenos.
-Possui mecanismo de limiar de confiança (threshold) para acionamento de fallback.
+Possui mecanismo de limiar de confiança (threshold) para acionamento de fallback
+e suporte a inspeção analítica de probabilidades para telemetria em tempo real.
 """
 
 import os
 import csv
+import time
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -21,8 +23,7 @@ class IntentClassifier:
         """
         self.confidence_threshold = confidence_threshold
         
-        # Vetorizador TF-IDF configurado com unigramas e bigramas para capturar pares de palavras
-        # como 'minha senha', 'nao conecta', 'abrir chamado'
+        # Vetorizador TF-IDF com unigramas e bigramas
         self.vectorizer = TfidfVectorizer(
             preprocessor=clean_text,
             ngram_range=(1, 2),
@@ -30,7 +31,7 @@ class IntentClassifier:
             min_df=1
         )
         
-        # Classificador supervisionado com probabilidades calibradas
+        # Classificador supervisionado com regularização L2 e pesos balanceados
         self.model = LogisticRegression(
             C=3.0,
             max_iter=1000,
@@ -74,56 +75,68 @@ class IntentClassifier:
         self.is_trained = True
         return self
 
-    def predict(self, text: str) -> dict:
+    def predict(self, text: str, apply_spellcheck: bool = False) -> dict:
         """
         Recebe uma mensagem de texto do usuário e retorna a intenção detectada,
-        o score de confiança (0.0 a 1.0) e o status de fallback.
+        o score de confiança (0.0 a 1.0), distribuição de probabilidades e telemetria.
         """
+        start_time = time.perf_counter()
+
         if not self.is_trained:
             raise RuntimeError("O modelo ainda não foi treinado. Chame train() primeiro.")
 
-        cleaned = clean_text(text)
+        cleaned = clean_text(text, apply_spellcheck=apply_spellcheck)
         if not cleaned:
+            elapsed_ms = (time.perf_counter() - start_time) * 1000
             return {
                 "intencao": "fora_escopo",
                 "confianca": 0.0,
                 "is_fallback": True,
-                "motivo": "Texto vazio ou composto exclusivamente por stopwords/pontuação."
+                "motivo": "Texto vazio ou composto exclusivamente por stopwords/pontuação.",
+                "todas_probabilidades": {c: 0.0 for c in self.classes_},
+                "latencia_ms": round(elapsed_ms, 3)
             }
 
         # Vetoriza o texto de entrada
         query_vec = self.vectorizer.transform([cleaned])
 
-        # Se todos os termos forem desconhecidos (fora do vocabulário TF-IDF), aciona fallback direto
+        # Se todos os termos forem OOV (Out of Vocabulary), fallback imediato
         if query_vec.nnz == 0:
+            elapsed_ms = (time.perf_counter() - start_time) * 1000
             return {
                 "intencao": "fora_escopo",
                 "confianca": 0.0,
                 "is_fallback": True,
-                "motivo": "Termos completamente fora do vocabulário treinado."
+                "motivo": "Termos completamente fora do vocabulário treinado.",
+                "todas_probabilidades": {c: 0.0 for c in self.classes_},
+                "latencia_ms": round(elapsed_ms, 3)
             }
 
-        # Obtém as probabilidades estimadas pelo modelo supervisionado
+        # Probabilidades do modelo supervisionado
         probabilities = self.model.predict_proba(query_vec)[0]
         max_idx = int(np.argmax(probabilities))
         predicted_class = self.classes_[max_idx]
         confidence = float(probabilities[max_idx])
 
-        # Também calculamos a similaridade de cosseno máxima com a base de exemplos de treino
+        # Similaridade de cosseno máxima com os exemplos de treino
         cosine_sims = cosine_similarity(query_vec, self.tfidf_matrix)[0]
         max_cosine_sim = float(np.max(cosine_sims))
 
-        # Score híbrido balanceado (combinação da probabilidade do classificador e da proximidade vetorial)
+        # Score híbrido de confiança calibrado
         hybrid_confidence = float(0.65 * confidence + 0.35 * max_cosine_sim)
 
-        # Regra de Fallback: Se a classe prevista for explicitamente 'fora_escopo'
-        # ou se a confiança híbrida for menor que o limiar operacional
+        # Regra de Fallback determinístico
         is_fallback = False
         if predicted_class == "fora_escopo" or hybrid_confidence < self.confidence_threshold:
             is_fallback = True
             final_intent = "fora_escopo"
         else:
             final_intent = predicted_class
+
+        # Dicionário com a probabilidade de todas as classes para o dashboard visual
+        all_probs = {c: round(float(p) * 100, 2) for c, p in zip(self.classes_, probabilities)}
+
+        elapsed_ms = (time.perf_counter() - start_time) * 1000
 
         return {
             "intencao": final_intent,
@@ -132,7 +145,9 @@ class IntentClassifier:
             "probabilidade_modelo": round(confidence, 4),
             "similaridade_cosseno": round(max_cosine_sim, 4),
             "is_fallback": is_fallback,
-            "limiar_aplicado": self.confidence_threshold
+            "limiar_aplicado": self.confidence_threshold,
+            "todas_probabilidades": all_probs,
+            "latencia_ms": round(elapsed_ms, 3)
         }
 
     def explain(self, text: str) -> dict:

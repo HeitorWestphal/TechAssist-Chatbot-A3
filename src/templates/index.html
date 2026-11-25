@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TechAssist AI - Helpdesk de TI N1</title>
+  <title>TechAssist AI — Helpdesk de TI N1 & Telemetria Analítica</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js para telemetria em tempo real -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .chat-bubble-user {
       background: linear-gradient(135deg, #2563eb, #1d4ed8);
@@ -29,10 +31,10 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 h-screen flex flex-col font-sans">
+<body class="bg-slate-100 h-screen flex flex-col font-sans overflow-hidden">
 
   <!-- Header Superior -->
-  <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm">
+  <header class="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between shadow-sm shrink-0">
     <div class="flex items-center space-x-3">
       <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-200">
         <i class="fa-solid fa-headset"></i>
@@ -41,136 +43,267 @@
         <div class="flex items-center space-x-2">
           <h1 class="font-bold text-slate-800 text-lg">TechAssist AI</h1>
           <span class="px-2 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700 rounded-full flex items-center">
-            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5 animate-pulse"></span> Online
+            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5 animate-pulse"></span> Online N1
           </span>
           <span class="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 rounded-full">
-            Modelo TF-IDF + PLN Híbrido
+            Modelo Híbrido TF-IDF + LogReg
           </span>
         </div>
-        <p class="text-xs text-slate-500">Central de Suporte Técnico & Helpdesk N1 • Projeto A3 Inteligência Artificial</p>
+        <p class="text-xs text-slate-500">Central de Suporte Técnico de TI • Projeto Integrador A3 Inteligência Artificial</p>
       </div>
     </div>
 
-    <!-- Controles de Cabeçalho -->
-    <div class="flex items-center space-x-3">
-      <button onclick="toggleModal('modalInfo')" class="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition flex items-center space-x-1">
-        <i class="fa-solid fa-circle-info"></i>
-        <span>Sobre a IA (R3)</span>
+    <!-- Controles do Header -->
+    <div class="flex items-center space-x-2">
+      <!-- Toggle Corretor Levenshtein (Marco 5) -->
+      <label class="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 cursor-pointer hover:bg-slate-100 transition" title="Melhoria desenvolvida no Marco 5 para erros de digitação">
+        <input type="checkbox" id="chkSpellcheck" class="rounded text-blue-600 focus:ring-blue-500">
+        <span><i class="fa-solid fa-spell-check text-blue-600"></i> Levenshtein (Marco 5)</span>
+      </label>
+
+      <button onclick="toggleSidebar()" class="px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition flex items-center space-x-1.5">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Telemetria & Gráficos</span>
       </button>
+
       <button onclick="resetConversation()" class="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition flex items-center space-x-1">
         <i class="fa-solid fa-rotate-right"></i>
-        <span>Reiniciar Sessão</span>
+        <span>Reiniciar</span>
       </button>
     </div>
   </header>
 
-  <!-- Container Principal -->
-  <div class="flex-1 max-w-5xl w-full mx-auto p-4 flex flex-col overflow-hidden">
-    <!-- Janela de Chat -->
-    <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 p-4 custom-scrollbar">
-      <!-- Mensagem de Boas-Vindas Inicial -->
-      <div class="flex items-start space-x-3">
-        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm shrink-0">
-          <i class="fa-solid fa-robot"></i>
-        </div>
-        <div class="max-w-xl">
-          <div class="chat-bubble-bot p-4 rounded-2xl text-sm border border-slate-200 whitespace-pre-line leading-relaxed">
-Olá! Sou o **TechAssist**, seu assistente virtual de Suporte e Helpdesk de TI Nível 1.
+  <!-- Layout Principal (Chat + Painel Lateral de Telemetria) -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- Coluna de Chat (Esquerda / Centro) -->
+    <div class="flex-1 flex flex-col p-4 max-w-4xl mx-auto w-full overflow-hidden">
+      <!-- Janela de Mensagens -->
+      <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 p-4 custom-scrollbar">
+        <!-- Boas-Vindas Inicial -->
+        <div class="flex items-start space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm shrink-0">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div class="max-w-xl">
+            <div class="chat-bubble-bot p-4 rounded-2xl text-sm border border-slate-200 whitespace-pre-line leading-relaxed">
+Olá! Sou o **TechAssist**, seu assistente virtual inteligente de Suporte e Helpdesk de TI Nível 1.
 
 Posso te ajudar com:
-• Redefinição de senha ou conta bloqueada
-• Problemas de conexão e token na VPN
-• Lentidão, travamento e diagnóstico do computador
-• Solicitação de instalação de programas homologados
-• Horários de atendimento e abertura de chamados técnicos
+• Redefinição de senha ou conta bloqueada (AD/Windows/E-mail)
+• Problemas de conexão e sincronização de token na VPN
+• Diagnóstico de lentidão e alto consumo de memória/disco
+• Solicitação de instalação de softwares homologados
+• Abertura de chamado técnico com protocolo (#TK-XXXXX)
 
 Como posso ajudar você hoje?
-          </div>
-          <div class="mt-2 flex flex-wrap gap-1.5">
-            <button onclick="sendQuickMessage('Esqueci minha senha')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🔑 Esqueci minha senha</button>
-            <button onclick="sendQuickMessage('Minha VPN não quer conectar')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🌐 VPN não conecta</button>
-            <button onclick="sendQuickMessage('Meu computador está muito lento')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">⚡ Computador lento</button>
-            <button onclick="sendQuickMessage('Quero abrir um chamado')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🎫 Abrir chamado N2</button>
+            </div>
+            <div class="mt-2.5 flex flex-wrap gap-1.5">
+              <button onclick="sendQuickMessage('Esqueci minha senha do computador')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🔑 Esqueci minha senha</button>
+              <button onclick="sendQuickMessage('Minha VPN não quer conectar')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🌐 VPN não conecta</button>
+              <button onclick="sendQuickMessage('Meu computador está muito lento')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">⚡ Computador lento</button>
+              <button onclick="sendQuickMessage('Quero abrir um chamado')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">🎫 Abrir chamado N2</button>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Indicador de Digitando -->
+      <div id="typingIndicator" class="hidden flex items-center space-x-2 text-xs text-slate-400 px-4 py-2">
+        <i class="fa-solid fa-circle-notch fa-spin text-blue-500"></i>
+        <span>TechAssist executando inferência matricial TF-IDF...</span>
+      </div>
+
+      <!-- Barra de Input e Envio -->
+      <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-sm mt-2">
+        <form id="chatForm" onsubmit="handleSendMessage(event)" class="flex items-center space-x-2">
+          <input 
+            id="messageInput" 
+            type="text" 
+            placeholder="Digite sua dúvida de suporte (ex: 'Não consigo logar no Windows', 'Como instalar o Docker')..." 
+            class="flex-1 px-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+            autocomplete="off"
+          />
+          <button 
+            type="submit" 
+            id="btnSend"
+            class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm rounded-xl transition flex items-center space-x-1.5 shadow-sm shadow-blue-200"
+          >
+            <span>Enviar</span>
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+          </button>
+        </form>
+      </div>
     </div>
 
-    <!-- Indicador de Digitando (oculto por padrão) -->
-    <div id="typingIndicator" class="hidden flex items-center space-x-2 text-xs text-slate-400 px-4 py-2">
-      <i class="fa-solid fa-circle-notch fa-spin text-blue-500"></i>
-      <span>TechAssist processando entrada via PLN...</span>
-    </div>
-
-    <!-- Barra de Input e Envio -->
-    <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-sm mt-2">
-      <form id="chatForm" onsubmit="handleSendMessage(event)" class="flex items-center space-x-2">
-        <input 
-          id="messageInput" 
-          type="text" 
-          placeholder="Digite sua dúvida de suporte técnico (ex: 'Não consigo logar no Windows', 'Como instalar o VS Code')..." 
-          class="flex-1 px-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-          autocomplete="off"
-        />
-        <button 
-          type="submit" 
-          id="btnSend"
-          class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium text-sm rounded-xl transition flex items-center space-x-1.5 shadow-sm shadow-blue-200"
-        >
-          <span>Enviar</span>
-          <i class="fa-solid fa-paper-plane text-xs"></i>
+    <!-- Barra Lateral de Telemetria e Gráficos Científicos (Direita) -->
+    <div id="telemetrySidebar" class="w-96 bg-white border-l border-slate-200 p-4 flex flex-col overflow-y-auto custom-scrollbar transition-all duration-300 shrink-0">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+        <h2 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+          <i class="fa-solid fa-chart-pie text-blue-600"></i>
+          <span>Telemetria de IA em Tempo Real</span>
+        </h2>
+        <button onclick="toggleSidebar()" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
         </button>
-      </form>
+      </div>
+
+      <!-- Cards de Métricas da Última Inferência -->
+      <div class="grid grid-cols-2 gap-2 mb-4">
+        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Latência de Inferência</span>
+          <span id="metricLatency" class="text-base font-extrabold text-blue-600 font-mono">0.00 ms</span>
+        </div>
+        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Score Confiança</span>
+          <span id="metricConfidence" class="text-base font-extrabold text-emerald-600 font-mono">0.0%</span>
+        </div>
+      </div>
+
+      <!-- Gráfico de Distribuição de Probabilidades Softmax (Chart.js) -->
+      <div class="mb-5 bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <h3 class="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+          <span>Distribuição Softmax por Intenção</span>
+          <span class="text-[10px] text-slate-400 font-normal">P(y=c|x)</span>
+        </h3>
+        <div class="h-44">
+          <canvas id="chartProbabilities"></canvas>
+        </div>
+      </div>
+
+      <!-- Galeria dos Gráficos Científicos da A3 -->
+      <div class="space-y-3">
+        <h3 class="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
+          <i class="fa-solid fa-images text-blue-600"></i>
+          <span>Gráficos de Validação Científica (A3)</span>
+        </h3>
+
+        <!-- Miniatura 1: Benchmark -->
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_benchmark_modelos.png', 'Benchmark Comparativo de Arquiteturas')">
+          <img src="/results/grafico_benchmark_modelos.png" class="w-full h-24 object-cover rounded-lg mb-1" alt="Benchmark" />
+          <span class="text-[11px] font-semibold text-slate-700 block">1. Benchmark Comparativo (4 Modelos)</span>
+        </div>
+
+        <!-- Miniatura 2: Calibração Threshold -->
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_calibracao_threshold.png', 'Curva de Calibração do Limiar Operacional')">
+          <img src="/results/grafico_calibracao_threshold.png" class="w-full h-24 object-cover rounded-lg mb-1" alt="Calibração" />
+          <span class="text-[11px] font-semibold text-slate-700 block">2. Calibração do Threshold (Sweet Spot 0.38)</span>
+        </div>
+
+        <!-- Miniatura 3: Matriz de Confusão -->
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_matriz_confusao.png', 'Matriz de Confusão Seaborn')">
+          <img src="/results/grafico_matriz_confusao.png" class="w-full h-24 object-cover rounded-lg mb-1" alt="Matriz" />
+          <span class="text-[11px] font-semibold text-slate-700 block">3. Heatmap da Matriz de Confusão</span>
+        </div>
+
+        <!-- Miniatura 4: PCA Espaço Vetorial -->
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_pca_espaco_vetorial.png', 'Projeção 2D PCA dos Clusters')">
+          <img src="/results/grafico_pca_espaco_vetorial.png" class="w-full h-24 object-cover rounded-lg mb-1" alt="PCA Clusters" />
+          <span class="text-[11px] font-semibold text-slate-700 block">4. Projeção PCA 2D dos Clusters TF-IDF</span>
+        </div>
+
+        <!-- Miniatura 5: Feature Importance -->
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_feature_importance_tfidf.png', 'Feature Importance por Intenção')">
+          <img src="/results/grafico_feature_importance_tfidf.png" class="w-full h-24 object-cover rounded-lg mb-1" alt="Feature Importance" />
+          <span class="text-[11px] font-semibold text-slate-700 block">5. Ponderação de Termos TF-IDF</span>
+        </div>
+
+        <!-- Miniatura 6: ROI e ITIL -->
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_impacto_operacional_helpdesk.png', 'Impacto Operacional ITIL')">
+          <img src="/results/grafico_impacto_operacional_helpdesk.png" class="w-full h-24 object-cover rounded-lg mb-1" alt="ROI ITIL" />
+          <span class="text-[11px] font-semibold text-slate-700 block">6. Projeção de Redução de TMA e Custos</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Modal Informativo: Arquitetura e IA (R3 e R4) -->
-  <div id="modalInfo" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-200 overflow-y-auto max-h-[90vh]">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-          <i class="fa-solid fa-microchip text-blue-600"></i>
-          <span>Mecanismo Autoral de IA e PLN (Requisito R3)</span>
-        </h2>
-        <button onclick="toggleModal('modalInfo')" class="text-slate-400 hover:text-slate-600">
+  <!-- Modal de Visualização de Imagem em Alta Resolução -->
+  <div id="imageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-4xl w-full p-4 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100 mb-3">
+        <h3 id="modalImageTitle" class="font-bold text-slate-800 text-sm">Visualização de Gráfico</h3>
+        <button onclick="closeImageModal()" class="text-slate-400 hover:text-slate-600">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
-
-      <div class="mt-4 space-y-4 text-xs text-slate-600 leading-relaxed">
-        <div>
-          <h3 class="font-bold text-slate-800 text-sm mb-1">1. Pipeline de Processamento de Linguagem Natural</h3>
-          <p>A entrada do usuário é processada por um pipeline modular que realiza:</p>
-          <ul class="list-disc ml-5 mt-1 space-y-1">
-            <li><strong>Normalização:</strong> conversão para minúsculas e remoção de marcas diacríticas/acentos via Unicode NFKD.</li>
-            <li><strong>Limpeza Regex:</strong> eliminação de ruídos e pontuações irrelevantes.</li>
-            <li><strong>Stopwords seletivas:</strong> filtragem de palavras gramaticais preservando núcleos semânticos de negação e dúvida.</li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="font-bold text-slate-800 text-sm mb-1">2. Vetorização e Modelo Preditivo</h3>
-          <p>O modelo utiliza <strong>TF-IDF com n-grams (1, 2)</strong> acoplado a um classificador supervisionado de <strong>Regressão Logística Calibrada</strong> e cálculo paralelo de <strong>Similaridade por Cosseno</strong>.</p>
-        </div>
-
-        <div>
-          <h3 class="font-bold text-slate-800 text-sm mb-1">3. Mecanismo de Confiança e Fallback</h3>
-          <p>Para evitar respostas errôneas ou alucinações, o sistema calcula uma métrica híbrida de confiança: <code>Confiança = 0.65 × P(modelo) + 0.35 × Cosseno</code>. Se o valor for inferior ao <strong>limiar operacional de 0.38</strong>, o sistema aciona fallback controlado, convidando o usuário a reformular ou abrindo um ticket de suporte N2.</p>
-        </div>
-      </div>
-
-      <div class="mt-6 pt-3 border-t border-slate-100 flex justify-end">
-        <button onclick="toggleModal('modalInfo')" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-medium hover:bg-blue-700">Fechar</button>
+      <div class="flex justify-center p-2">
+        <img id="modalImageSrc" src="" class="max-h-[75vh] w-auto rounded-xl shadow-sm border border-slate-100" />
       </div>
     </div>
   </div>
 
   <script>
     const sessionId = "web_session_" + Math.random().toString(36).substring(2, 9);
+    let probChart = null;
 
-    function toggleModal(id) {
-      const modal = document.getElementById(id);
-      modal.classList.toggle('hidden');
+    // Inicialização do Gráfico Chart.js
+    function initChart() {
+      const ctx = document.getElementById('chartProbabilities').getContext('2d');
+      probChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Senha', 'VPN', 'Lento', 'Software', 'Chamado', 'Horário', 'Saudação', 'Outro'],
+          datasets: [{
+            label: 'Probabilidade (%)',
+            data: [0, 0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: '#3b82f6',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          scales: {
+            x: { min: 0, max: 100, ticks: { font: { size: 9 } } },
+            y: { ticks: { font: { size: 9.5, weight: 'bold' } } }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+    document.addEventListener("DOMContentLoaded", initChart);
+
+    function updateChart(probDict) {
+      if (!probChart || !probDict) return;
+      const mapping = {
+        'redefinicao_senha': 'Senha',
+        'problema_vpn_acesso': 'VPN',
+        'lentidao_sistema': 'Lento',
+        'instalacao_software': 'Software',
+        'abertura_chamado': 'Chamado',
+        'horario_suporte': 'Horário',
+        'saudacao': 'Saudação',
+        'fora_escopo': 'Outro'
+      };
+
+      const labels = [];
+      const values = [];
+      for (const [k, v] of Object.entries(mapping)) {
+        labels.push(v);
+        values.push(probDict[k] || 0);
+      }
+
+      probChart.data.labels = labels;
+      probChart.data.datasets[0].data = values;
+      probChart.update();
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('telemetrySidebar');
+      sidebar.classList.toggle('hidden');
+    }
+
+    function openImageModal(src, title) {
+      document.getElementById('modalImageSrc').src = src;
+      document.getElementById('modalImageTitle').innerText = title;
+      document.getElementById('imageModal').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.add('hidden');
     }
 
     function sendQuickMessage(text) {
@@ -184,6 +317,8 @@ Como posso ajudar você hoje?
       const text = input.value.trim();
       if (!text) return;
 
+      const spellcheckActive = document.getElementById('chkSpellcheck').checked;
+
       input.value = '';
       appendUserMessage(text);
 
@@ -194,11 +329,22 @@ Como posso ajudar você hoje?
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text, session_id: sessionId })
+          body: JSON.stringify({
+            message: text,
+            session_id: sessionId,
+            apply_spellcheck: spellcheckActive
+          })
         });
         const data = await response.json();
         indicator.classList.add('hidden');
         appendBotMessage(data);
+
+        // Atualiza telemetria em tempo real
+        document.getElementById('metricLatency').innerText = (data.latencia_ms || 0.5).toFixed(2) + ' ms';
+        document.getElementById('metricConfidence').innerText = (data.confianca * 100).toFixed(1) + '%';
+        if (data.todas_probabilidades) {
+          updateChart(data.todas_probabilidades);
+        }
       } catch (err) {
         indicator.classList.add('hidden');
         appendBotMessage({
@@ -238,7 +384,7 @@ Como posso ajudar você hoje?
 
       let suggestionsHtml = "";
       if (data.acoes_sugeridas && data.acoes_sugeridas.length > 0) {
-        suggestionsHtml = `<div class="mt-2 flex flex-wrap gap-1.5">` + 
+        suggestionsHtml = `<div class="mt-2.5 flex flex-wrap gap-1.5">` + 
           data.acoes_sugeridas.map(s => 
             `<button onclick="sendQuickMessage('${escapeHtml(s)}')" class="px-2.5 py-1 text-xs bg-white hover:bg-blue-50 hover:text-blue-600 border border-slate-300 rounded-full transition shadow-sm">${escapeHtml(s)}</button>`
           ).join('') + `</div>`;
@@ -253,11 +399,12 @@ Como posso ajudar você hoje?
             ${formatMarkdown(data.resposta)}
           </div>
           
-          <div class="flex items-center space-x-2 mt-1.5 text-[11px] text-slate-400">
-            <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold ${badgeColor} flex items-center space-x-1">
+          <div class="flex items-center space-x-2 mt-2 text-[11px] text-slate-400">
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-semibold ${badgeColor} flex items-center space-x-1">
               <i class="fa-solid ${icon}"></i>
               <span>Intenção: ${data.intencao} (${confidencePercent}%)</span>
             </span>
+            ${data.latencia_ms ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-100 text-slate-600">${data.latencia_ms} ms</span>` : ''}
             ${data.protocolo ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700">Ticket #${data.protocolo}</span>` : ''}
           </div>
 
@@ -277,7 +424,7 @@ Como posso ajudar você hoje?
       const container = document.getElementById('chatMessages');
       container.innerHTML = `
         <div class="p-3 bg-blue-50 border border-blue-200 text-blue-700 text-xs rounded-xl text-center">
-          Sessão reiniciada com sucesso. O histórico de contexto foi limpo.
+          Sessão reiniciada com sucesso. O histórico de contexto e telemetria foram limpos.
         </div>
       `;
       setTimeout(() => sendQuickMessage('olá'), 400);
@@ -288,11 +435,9 @@ Como posso ajudar você hoje?
     }
 
     function formatMarkdown(text) {
-      // Formatação simples de negrito e links/código
-      let formatted = text
+      return text
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/`(.*?)`/g, '<code class="bg-slate-100 px-1 py-0.5 rounded font-mono text-xs text-blue-600">$1</code>');
-      return formatted;
     }
   </script>
 </body>
