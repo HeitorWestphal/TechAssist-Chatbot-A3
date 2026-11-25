@@ -48,6 +48,13 @@ def reset():
     engine.reset_session(session_id)
     return jsonify({"status": "reset_ok"})
 
+@app.route("/api/history", methods=["GET"])
+def history():
+    """Retorna o histórico de mensagens registradas em uma sessão."""
+    session_id = request.args.get("session_id", "web_default")
+    session = engine.get_or_create_session(session_id)
+    return jsonify({"session_id": session_id, "history": session.get("history", [])})
+
 @app.route("/api/explain", methods=["GET", "POST"])
 def explain():
     """Endpoint de explicabilidade e atribuição de tokens TF-IDF (XAI)."""
