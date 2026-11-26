@@ -62,3 +62,15 @@ def test_list_tickets():
     resolved = database.list_tickets(status="RESOLVIDO")
     for t in resolved:
         assert t["status"] == "RESOLVIDO"
+
+def test_list_tickets_filter_priority():
+    proto = f"TK-CRITICO-{uuid.uuid4().hex[:6]}"
+    database.create_ticket(
+        protocolo=proto,
+        descricao="Servidor principal inoperante",
+        intencao="lentidao_sistema",
+        confianca=0.99,
+        prioridade="CRITICA"
+    )
+    criticos = database.list_tickets(prioridade="CRITICA")
+    assert any(t["protocolo"] == proto for t in criticos)
