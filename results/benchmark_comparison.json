@@ -5,7 +5,7 @@
     "recall": 72.0,
     "f1_score": 71.9,
     "fora_escopo_taxa": 100.0,
-    "latencia_ms": 0.021,
+    "latencia_ms": 0.016,
     "predicoes": [
       "redefinicao_senha",
       "problema_vpn_acesso",
@@ -40,7 +40,7 @@
     "recall": 92.0,
     "f1_score": 92.0,
     "fora_escopo_taxa": 80.0,
-    "latencia_ms": 0.276,
+    "latencia_ms": 0.271,
     "predicoes": [
       "redefinicao_senha",
       "problema_vpn_acesso",
@@ -75,7 +75,7 @@
     "recall": 92.0,
     "f1_score": 92.0,
     "fora_escopo_taxa": 80.0,
-    "latencia_ms": 0.27,
+    "latencia_ms": 0.272,
     "predicoes": [
       "redefinicao_senha",
       "problema_vpn_acesso",
@@ -110,7 +110,7 @@
     "recall": 72.0,
     "f1_score": 74.01,
     "fora_escopo_taxa": 100.0,
-    "latencia_ms": 0.573,
+    "latencia_ms": 0.551,
     "predicoes": [
       "redefinicao_senha",
       "problema_vpn_acesso",

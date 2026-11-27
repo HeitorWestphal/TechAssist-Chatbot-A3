@@ -6,13 +6,18 @@ Gera:
 """
 
 import os
+import sys
 import time
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-RESULTS_DIR = os.path.join(os.path.dirname(__file__), "..", "results")
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
+
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 # Configuração de estilo visual corporativo
@@ -21,7 +26,7 @@ plt.rcParams['axes.edgecolor'] = '#cbd5e1'
 plt.rcParams['axes.linewidth'] = 0.8
 
 def generate_radar_chart():
-    """Gera gráfico radar de trade-offs de engenharia de software e IA."""
+    """Gera gráfico radar de trade-offs de engenharia de software e IA sem sobreposição de textos."""
     categories = [
         'Acurácia no\nDomínio (N1)',
         'Resiliência OOD\n(Fallback Seguro)',
@@ -44,36 +49,38 @@ def generate_radar_chart():
     for vals in [option_a, option_b1, option_b2, option_c]:
         vals.append(vals[0])
 
-    fig, ax = plt.subplots(figsize=(8.5, 8.5), subplot_kw=dict(polar=True), dpi=300)
+    fig, ax = plt.subplots(figsize=(9.5, 9.0), subplot_kw=dict(polar=True), dpi=300)
     fig.patch.set_facecolor('#ffffff')
     ax.set_facecolor('#f8fafc')
 
-    plt.xticks(angles[:-1], categories, color='#0f172a', size=11, fontweight='bold')
+    plt.xticks(angles[:-1], categories, color='#0f172a', size=10.5, fontweight='bold')
+    ax.tick_params(axis='x', pad=24) # Amplo espaçamento dos rótulos angulares
     ax.set_rlabel_position(30)
     plt.yticks([2, 4, 6, 8, 10], ["2", "4", "6", "8", "10"], color="#64748b", size=9)
-    plt.ylim(0, 10.5)
+    plt.ylim(0, 10.8)
 
     # Plot Opção A
     ax.plot(angles, option_a, linewidth=1.8, linestyle='dotted', color='#ef4444', label='Opção A: Regras Simbólicas (Regex)')
-    ax.fill(angles, option_a, color='#ef4444', alpha=0.08)
+    ax.fill(angles, option_a, color='#ef4444', alpha=0.07)
 
     # Plot Opção B1
     ax.plot(angles, option_b1, linewidth=1.8, linestyle='dashed', color='#f59e0b', label='Opção B1: TF-IDF + Naive Bayes')
-    ax.fill(angles, option_b1, color='#f59e0b', alpha=0.08)
+    ax.fill(angles, option_b1, color='#f59e0b', alpha=0.07)
 
     # Plot Opção B2
     ax.plot(angles, option_b2, linewidth=1.8, linestyle='dashdot', color='#8b5cf6', label='Opção B2: TF-IDF + Linear SVM')
-    ax.fill(angles, option_b2, color='#8b5cf6', alpha=0.08)
+    ax.fill(angles, option_b2, color='#8b5cf6', alpha=0.07)
 
     # Plot Opção C (TechAssist Híbrido)
     ax.plot(angles, option_c, linewidth=3.0, color='#2563eb', label='Opção C: TechAssist Híbrido (Proposta)')
-    ax.fill(angles, option_c, color='#2563eb', alpha=0.25)
+    ax.fill(angles, option_c, color='#2563eb', alpha=0.22)
 
     plt.title("Análise Multicritério de Decisão Arquitetural (AHP / Radar de Trade-offs)\nComparativo das 4 Abordagens de NLP e Governança",
-              size=13, fontweight='bold', pad=28, color='#0f172a')
+              size=12.5, fontweight='bold', pad=38, color='#0f172a')
     
-    plt.legend(loc='upper right', bbox_to_anchor=(1.35, 1.12), fontsize=10, frameon=True, facecolor='#ffffff', edgecolor='#cbd5e1')
-    plt.tight_layout()
+    # Legenda limpa e espaçada na parte inferior em 2 colunas para nunca sobrepor rótulos
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.10), ncol=2, fontsize=9.5,
+              frameon=True, facecolor='#ffffff', edgecolor='#cbd5e1', framealpha=0.95)
     
     out_path = os.path.join(RESULTS_DIR, "grafico_radar_tradeoffs.png")
     plt.savefig(out_path, dpi=300, bbox_inches='tight')
@@ -204,7 +211,7 @@ def generate_kfold_chart():
     ax.set_xticks(x_pos)
     ax.set_xticklabels([m.split(": ")[1] for m in models], fontsize=11, fontweight="bold", color="#0f172a")
     ax.set_ylabel("Acurácia de Validação Cruzada (%)", fontsize=11, fontweight="bold", color="#0f172a", labelpad=8)
-    ax.set_ylim(70, 105)
+    ax.set_ylim(60, 115)
     ax.grid(True, axis="y", linestyle=":", alpha=0.6, color="#94a3b8")
 
     plt.title("Validação Cruzada Estratificada em 5 Folds (5-Fold Stratified CV)\nRobustez Estatística e Generalização dos Classificadores",

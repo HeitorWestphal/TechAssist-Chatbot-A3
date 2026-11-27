@@ -159,7 +159,7 @@ def run_ablation_study():
     ax.set_ylabel('Taxa de Desempenho e Segurança (%)', fontsize=11, fontweight='bold', color='#0f172a', labelpad=8)
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels, fontsize=8.5, fontweight='bold', color='#0f172a')
-    ax.set_ylim(0, 115)
+    ax.set_ylim(0, 122)
     ax.grid(True, axis='y', linestyle=':', alpha=0.6, color='#94a3b8')
     ax.legend(loc='upper left', frameon=True, facecolor='#ffffff', edgecolor='#cbd5e1', fontsize=9.5)
 
@@ -203,7 +203,7 @@ def run_learning_curve():
     with open(os.path.join(RESULTS_DIR, "curva_aprendizado.json"), "w", encoding="utf-8") as f:
         json.dump(lc_data, f, indent=2, ensure_ascii=False)
 
-    fig, ax = plt.subplots(figsize=(9, 5.2), dpi=300)
+    fig, ax = plt.subplots(figsize=(9.5, 5.5), dpi=300)
     fig.patch.set_facecolor('#ffffff')
     ax.set_facecolor('#f8fafc')
 
@@ -215,13 +215,16 @@ def run_learning_curve():
 
     ax.set_xlabel('Número de Exemplos de Treinamento no Corpus', fontsize=11, fontweight='bold', color='#0f172a', labelpad=8)
     ax.set_ylabel('Acurácia de Classificação (%)', fontsize=11, fontweight='bold', color='#0f172a', labelpad=8)
-    ax.set_ylim(60, 105)
+    ax.set_ylim(15, 110)
+    ax.set_xlim(12, 94)
     ax.grid(True, linestyle=':', alpha=0.6, color='#94a3b8')
-    ax.legend(loc='lower right', frameon=True, facecolor='#ffffff', edgecolor='#cbd5e1', fontsize=10)
 
-    # Anotação de convergência
-    ax.annotate('Convergência Ótima com Baixo Volume Amostral\n(Sample Efficiency: >75% com ~40 sentenças)',
-                xy=(train_sizes[-2], test_mean[-2]), xytext=(train_sizes[1], 66),
+    # Legenda limpa no canto central-direito (espaço livre)
+    ax.legend(loc='center right', frameon=True, facecolor='#ffffff', edgecolor='#cbd5e1', fontsize=9.5, framealpha=0.95)
+
+    # Anotação de convergência posicionada no espaço livre à esquerda (sem colisão)
+    ax.annotate('Convergência com Baixo Volume Amostral\n(Sample Efficiency: Saturação com ~60 sentenças)',
+                xy=(train_sizes[-2], test_mean[-2]), xytext=(20, 48),
                 arrowprops=dict(facecolor='#0f172a', shrink=0.08, width=1.5, headwidth=6),
                 fontsize=9.5, fontweight='bold', color='#0f172a',
                 bbox=dict(boxstyle="round,pad=0.4", fc="#ffffff", ec="#cbd5e1", lw=1))
@@ -280,8 +283,8 @@ def run_resource_and_roi_profiling():
         ax2.text(bar.get_x() + bar.get_width()/2., h + 3.0, f'R$ {val:.2f}', ha='center', va='bottom', fontsize=9.5, fontweight='bold', color='#0f172a')
 
     plt.suptitle("Análise Comparativa de Engenharia e Viabilidade Corporativa (ROI)\nTechAssist AI Local vs Abordagens Baseadas em LLMs Pesados",
-                 fontsize=12, fontweight='bold', y=1.03, color='#0f172a')
-    plt.tight_layout()
+                 fontsize=12, fontweight='bold', y=0.98, color='#0f172a')
+    plt.tight_layout(rect=[0, 0, 1, 0.90])
     out_path = os.path.join(RESULTS_DIR, "grafico_comparativo_recursos_roi.png")
     plt.savefig(out_path, dpi=300, bbox_inches='tight')
     plt.close()

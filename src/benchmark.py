@@ -326,8 +326,8 @@ def run_full_benchmark(
         ax.set_title(f"Intenção: {cls_name.replace('_', ' ').title()}", fontsize=11, fontweight='bold', color='#1E3A8A')
         ax.set_xlabel('Peso Coeficiente Softmax', fontsize=9)
 
-    plt.suptitle('Importância de Termos e N-Grams Relevantes por Intenção (Feature Weights)', fontsize=13, fontweight='bold', color='#1E3A8A')
-    plt.tight_layout()
+    plt.suptitle('Importância de Termos e N-Grams Relevantes por Intenção (Feature Weights)', fontsize=12.5, fontweight='bold', color='#1E3A8A', y=0.98)
+    plt.tight_layout(rect=[0, 0, 1, 0.93])
     plt.savefig(os.path.join(output_dir, "grafico_feature_importance_tfidf.png"), dpi=300)
     plt.close()
     print("✓ Gráfico 6: grafico_feature_importance_tfidf.png")
@@ -381,8 +381,8 @@ def run_full_benchmark(
             wedgeprops={'edgecolor': 'white', 'linewidth': 2}, textprops={'fontsize': 9, 'fontweight': 'bold'})
     ax2.set_title('Projeção de Roteamento de Chamados (10k Tickets/mês)', fontsize=11.5, fontweight='bold', color='#1E3A8A')
 
-    plt.suptitle('Simulação de Impacto Operacional e Eficiência Corporativa de TI (ITIL v4)', fontsize=13, fontweight='bold', color='#1E3A8A')
-    plt.tight_layout()
+    plt.suptitle('Simulação de Impacto Operacional e Eficiência Corporativa de TI (ITIL v4)', fontsize=12.5, fontweight='bold', color='#1E3A8A', y=0.98)
+    plt.tight_layout(rect=[0, 0, 1, 0.92])
     plt.savefig(os.path.join(output_dir, "grafico_impacto_operacional_helpdesk.png"), dpi=300)
     plt.close()
     print("✓ Gráfico 8: grafico_impacto_operacional_helpdesk.png")
