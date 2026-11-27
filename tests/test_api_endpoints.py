@@ -44,6 +44,14 @@ def test_api_reset(client):
     data = response.get_json()
     assert data["status"] == "reset_ok"
 
+def test_api_history(client):
+    client.post("/api/chat", json={"message": "Ola bom dia", "session_id": "test_history_sess"})
+    res = client.get("/api/history?session_id=test_history_sess")
+    assert res.status_code == 200
+    data = res.get_json()
+    assert "history" in data
+    assert len(data["history"]) >= 1
+
 def test_api_explain(client):
     response = client.get("/api/explain?text=vpn+caiu+e+nao+conecta")
     assert response.status_code == 200
