@@ -1,0 +1,13 @@
+{
+  "corpus_original": {
+    "total_sentencas": 110,
+    "media_acuracia_5fold": 75.45,
+    "desvio_padrao": 6.17
+  },
+  "corpus_aumentado_eda": {
+    "total_sentencas": 247,
+    "media_acuracia_5fold": 95.94,
+    "desvio_padrao": 2.87
+  },
+  "ganho_estabilidade_variancia": 3.3
+}

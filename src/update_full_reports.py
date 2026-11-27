@@ -1,4 +1,4 @@
-"""Script para sincronizar e compilar RELATORIO_TECNICO_A3.docx e RELATORIO_TECNICO_A3.pdf com 14 figuras científicas."""
+"""Script para sincronizar e compilar RELATORIO_TECNICO_A3.docx e RELATORIO_TECNICO_A3.pdf com 19 figuras científicas."""
 import os
 import docx
 from docx.shared import Inches, Pt, RGBColor
@@ -32,7 +32,9 @@ FIG_MAP = {
     "Figura 14": "grafico_comparativo_recursos_roi.png",
     "Figura 15": "grafico_significancia_estatistica_mcnemar.png",
     "Figura 16": "grafico_curva_calibracao_ece.png",
-    "Figura 17": "grafico_robustez_adversarial_ruido.png"
+    "Figura 17": "grafico_robustez_adversarial_ruido.png",
+    "Figura 18": "grafico_benchmark_bm25_vs_tfidf.png",
+    "Figura 19": "grafico_impacto_data_augmentation.png"
 }
 
 def generate_docx():
@@ -114,7 +116,7 @@ def generate_docx():
         i += 1
 
     doc.save(DOCX_PATH)
-    print(f"[OK] Gerado {DOCX_PATH} com 14 figuras incorporadas!")
+    print(f"[OK] Gerado {DOCX_PATH} com 19 figuras incorporadas!")
 
 def generate_pdf():
     doc_pdf = SimpleDocTemplate(
@@ -211,7 +213,7 @@ def generate_pdf():
         i += 1
 
     doc_pdf.build(story)
-    print(f"[OK] Gerado {PDF_PATH} com 14 figuras em alta resolução!")
+    print(f"[OK] Gerado {PDF_PATH} com 19 figuras em alta resolução!")
 
 if __name__ == "__main__":
     generate_docx()

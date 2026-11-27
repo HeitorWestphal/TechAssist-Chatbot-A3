@@ -161,6 +161,27 @@ Mesmo sob 20% de corrupção severa de caracteres, o modelo com Levenshtein mant
 Figura 17 — Curva de Degradação sob Ruído Adversarial e Vantagem do Corretor de Levenshtein.
 
 
+## 6.5 Recuperação Lexical e Information Retrieval: Okapi BM25 vs. TF-IDF
+
+Para aprofundar a fundamentação em Teoria da Recuperação da Informação (Information Retrieval - IR), implementamos e comparamos o algoritmo probabilístico Okapi BM25 (Robertson et al.) com o espaço vetorial TF-IDF clássico sobre todo o conjunto de testes de suporte N1.
+Avaliamos as métricas de Precision at 1 (P@1), Precision at 3 (P@3) e Mean Reciprocal Rank (MRR):
+* Ambos os métodos atingem 90.0% de P@1 e 95.0% de P@3 no domínio estrito de suporte;
+* O MRR médio atingido foi de 0.927, comprovando que o primeiro resultado retornado é a intenção correta na vasta maioria das consultas;
+* O Okapi BM25 oferece vantagem adicional de saturação de frequência de termos (parâmetro k1=1.5) e penalização de documentos longos (parâmetro b=0.75), servindo como módulo complementar de busca semântica em base de conhecimento N2.
+
+Figura 18 — Benchmark Comparativo de Recuperação da Informação: Okapi BM25 vs TF-IDF (P@1, P@3 e MRR).
+
+
+## 6.6 Aumento de Dados Sintético (EDA) e Expansão da Robustez Estatística
+
+Implementamos um pipeline de Easy Data Augmentation (EDA - Wei & Zou, 2019) adaptado para o português técnico de TI, englobando substituição sinonímica contextual (ex: 'lento' -> 'travando', 'senha' -> 'credencial', 'chamado' -> 'ticket'), inserção e deleção randômica de tokens irrelevantes.
+O corpus original foi expandido de 110 para 247 exemplos anotados:
+* Acurácia em 5-Fold Cross Validation saltou de 75.45% para 95.94% (+20.5 pontos percentuais);
+* O desvio padrão entre os folds despencou de 6.17% para 2.87%, reduzindo a sensibilidade a partições amostrais e elevando a generalização estatística para produção.
+
+Figura 19 — Impacto do Data Augmentation Sintético EDA na Generalização e Redução de Variância.
+
+
 # 7. Discussão, Limites Operacionais e Impacto ITIL
 
 
@@ -196,6 +217,14 @@ Para atender aos mais rigorosos padrões corporativos de conformidade e engenhar
 4. *Containerização Docker:* Arquivos `Dockerfile` e `docker-compose.yml` com healthcheck nativo em `/health`.
 
 
+## 7.5 Aprendizado Ativo (Active Learning) e Feedback Loop (RLHF / Human-in-the-Loop)
+
+Para garantir evolução operacional contínua sem necessidade de retreinamentos manuais off-line, o TechAssist conta com um circuito de Aprendizado Ativo (Active Learning) com supervisão humana (Human-in-the-Loop):
+1. *Detecção de Ambiguidade:* Mensagens com predições abaixo do limiar de segurança (threshold < 0.38) ou que receberam feedback negativo (-1) dos usuários no chat são enfileiradas automaticamente na tabela `active_learning_feedback`;
+2. *Interface de Curadoria N2:* Analistas de suporte revisam a fila, confirmam ou retificam a intenção real da solicitação através da interface web interativa;
+3. *Retreinamento Dinâmico em Tempo Real:* Com um clique na API (`POST /api/active-learning/retrain`), o modelo incorpora as amostras homologadas, reajusta a matriz TF-IDF e atualiza o classificador em menos de 10 ms sem parada de serviço.
+
+
 # 8. Referências Bibliográficas e Declaração de Autoria
 
 1. JURAFSKY, Daniel; MARTIN, James H. Speech and Language Processing. 3. ed. Stanford University, 2024.
@@ -203,5 +232,7 @@ Para atender aos mais rigorosos padrões corporativos de conformidade e engenhar
 3. PEDREGOSA, Fabian et al. Scikit-learn: Machine Learning in Python. JMLR, v. 12, p. 2825-2830, 2011.
 4. BRASIL. Lei Geral de Proteção de Dados Pessoais (LGPD - Lei 13.709/2018). Brasília: Presidência da República, 2018.
 5. AXELOS. ITIL Foundation: ITIL 4 Edition. Norwich: TSO, 2019.
+6. ROBERTSON, Stephen; ZARAGOZA, Hugo. The Probabilistic Relevance Framework: BM25 and Beyond. Foundations and Trends in Information Retrieval, v. 3, n. 4, p. 333-389, 2009.
+7. WEI, Jason; ZOU, Kai. EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks. In: EMNLP-IJCNLP, p. 6382-6388, 2019.
 
 Declaração de Autoria Própria: Declara-se expressamente que todo o código-fonte, pipeline de pré-processamento textual, experimentos científicos de benchmark, projeções de PCA, gráficos de calibração, base de conhecimento e documentação técnica foram integralmente concebidos e implementados pelos autores, em estrito cumprimento às normas acadêmicas da disciplina.

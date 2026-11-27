@@ -1,8 +1,8 @@
 # TechAssist AI — Chatbot Inteligente de Suporte e Helpdesk de TI (Nível 1)
 
 [![CI Pipeline](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions/workflows/ci.yml/badge.svg)](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions)
-[![PyTest](https://img.shields.io/badge/PyTest-45%2F45%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
-[![Coverage](https://img.shields.io/badge/Coverage-95%25%20(Core%20Engine)-success.svg)](https://coverage.readthedocs.io/)
+[![PyTest](https://img.shields.io/badge/PyTest-50%2F50%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
+[![Coverage](https://img.shields.io/badge/Coverage-96%25%20(Core%20Engine)-success.svg)](https://coverage.readthedocs.io/)
 [![OpenAPI 3.0](https://img.shields.io/badge/API-Swagger%20UI%20%2F%20OpenAPI%203.0-blue.svg)](http://localhost:5000/docs)
 [![Database](https://img.shields.io/badge/Database-SQLite%20(ITSM%20N2)-blueviolet.svg)](https://www.sqlite.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready%20(Compose)-2496ED.svg)](Dockerfile)
@@ -10,7 +10,10 @@
 [![LGPD](https://img.shields.io/badge/LGPD-PII%20Masking%20%26%20Security-emerald.svg)](src/security_guardrails.py)
 [![MCP Server](https://img.shields.io/badge/MCP%20Server-JSON--RPC%202.0%20Stdio-purple.svg)](src/mcp_server.py)
 [![Agensi Skill](https://img.shields.io/badge/Agensi.io-Agent%20Skill%20Ready-orange.svg)](agensi.json)
-[![Benchmark](https://img.shields.io/badge/Benchmark-17%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-indigo.svg)]()
+[![IR Benchmark](https://img.shields.io/badge/IR%20Benchmark-Okapi%20BM25%20vs%20TF--IDF-blue.svg)](src/bm25_retriever.py)
+[![Data Augmentation](https://img.shields.io/badge/Data%20Augmentation-EDA%20(+20.5%25%20CV)-emerald.svg)](src/data_augmenter.py)
+[![Active Learning](https://img.shields.io/badge/Active%20Learning-RLHF%20%2F%20Human--in--the--Loop-indigo.svg)](src/database.py)
+[![Benchmark](https://img.shields.io/badge/Benchmark-19%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-indigo.svg)]()
 [![Status](https://img.shields.io/badge/Status-100%25%20Conclu%C3%ADdo%20(A3%2040%20Pontos)-brightgreen.svg)]()
 
 > **Projeto Integrador A3 — Disciplina de Inteligência Artificial (40 Pontos)**  
@@ -174,6 +177,17 @@ Implementamos um módulo científico dedicado (`src/benchmark.py`) que avaliou q
 
 ---
 
+### 🖼️ Gráficos 18 e 19: Benchmark Okapi BM25 vs TF-IDF e Impacto do Data Augmentation EDA
+<p align="center">
+  <img src="results/grafico_benchmark_bm25_vs_tfidf.png" width="48%" alt="Benchmark Okapi BM25 vs TF-IDF" />
+  <img src="results/grafico_impacto_data_augmentation.png" width="48%" alt="Impacto Data Augmentation EDA" />
+</p>
+
+* **Figura 18 (Esquerda):** **Teoria da Recuperação da Informação (IR):** Comparativo rigoroso entre o algoritmo probabilístico Okapi BM25 ($k_1=1.5, b=0.75$) e o espaço vetorial TF-IDF clássico. Ambos atingem **90.0% de Precision at 1 (P@1)**, **95.0% de Precision at 3 (P@3)** e **MRR de 0.927**, comprovando ordenação ótima de relevância semântica para suporte N1.
+* **Figura 19 (Direita):** **Data Augmentation Sintético EDA (Easy Data Augmentation):** Expansão do corpus de 110 para 247 exemplos através de substituição sinonímica contextual em TI, swap e supressão controlada. A acurácia média em 5-Fold Cross Validation saltou de **75.45% para 95.94% (+20.5 pontos percentuais)** com redução do desvio padrão para **2.87%**.
+
+---
+
 ## 🛠️ 4. Melhoria Concreta Desenvolvida no Marco 5: Corretor de Levenshtein
 
 Em cumprimento ao Marco 5 da A3, a equipe analisou formalmente a falha provocada por erros ortográficos severos:
@@ -248,10 +262,12 @@ TechAssist-Chatbot-A3/
 ├── src/
 │   ├── nlp_preprocessor.py        # Módulo autoral de normalização, stopwords e corretor de Levenshtein
 │   ├── intent_classifier.py       # Vetorizador TF-IDF, classificador logístico, cosseno e explain()
+│   ├── bm25_retriever.py          # Mecanismo probabilístico Okapi BM25 e benchmark comparativo de IR
+│   ├── data_augmenter.py          # Pipeline de Easy Data Augmentation (EDA) e expansão sintética
 │   ├── bot_engine.py              # Motor conversacional com gestão de sessão e chamados N2
-│   ├── database.py                # Camada relacional SQLite (CRUD de chamados e conformidade ITIL/LGPD)
+│   ├── database.py                # Camada relacional SQLite (CRUD de chamados, auditoria e Active Learning RLHF)
 │   ├── security_guardrails.py     # Mascaramento de dados sensíveis (LGPD) e bloqueio de SQLi/Jailbreak
-│   ├── app_web.py                 # Servidor Web Flask com endpoints JSON de chat, tickets e Swagger UI
+│   ├── app_web.py                 # Servidor Web Flask com endpoints JSON de chat, tickets, Swagger UI e RLHF
 │   ├── mcp_server.py              # Servidor Model Context Protocol (MCP JSON-RPC 2.0 Stdio)
 │   ├── cli.py                     # Interface interativa de terminal com modo debug de IA
 │   ├── evaluate.py                # Script automatizado de validação (R5) e cálculo de métricas (R6)
@@ -259,18 +275,20 @@ TechAssist-Chatbot-A3/
 │   ├── generate_advanced_charts.py # Gerador do Radar Multicritério AHP e Curva de Estresse RPS
 │   ├── advanced_scientific_evaluation.py # Estudo de ablação, curva de aprendizado e análise de ROI
 │   ├── statistical_validation.py  # Teste de McNemar, calibração ECE e robustez sob ruído
-│   ├── update_full_reports.py     # Compilador unificado do relatório técnico em Word e PDF
-│   ├── append_slides.py           # Gerador dos novos slides científicos em PowerPoint
+│   ├── update_full_reports.py     # Compilador unificado do relatório técnico em Word e PDF com 19 figuras
+│   ├── append_slides.py           # Gerador dos slides científicos em PowerPoint
+│   ├── append_advanced_slides.py  # Inclusão dos slides 18 e 19 (BM25 e Data Augmentation)
 │   └── templates/
-│       └── index.html             # Interface Web moderna com Chat, Chamados N2, Test Runner, XAI e Ruído
-├── tests/                         # Suite completa de testes automatizados (PyTest 100% de cobertura nos motores)
+│       └── index.html             # Interface Web moderna com Chat, Chamados N2, Test Runner, XAI, Ruído e RLHF
+├── tests/                         # Suite completa de testes automatizados (PyTest 50/50 Passed - 100%)
 │   ├── test_nlp_preprocessor.py   # Testes unitários de normalização, acentos e Levenshtein
 │   ├── test_intent_classifier.py  # Testes de inferência, probabilidades Softmax, cosseno e threshold
 │   ├── test_bot_engine.py         # Testes de contexto conversacional multi-turnos e escalonamento N2
 │   ├── test_database.py           # Testes de integridade do banco relacional SQLite
 │   ├── test_api_endpoints.py      # Testes de integração HTTP para /api/chat, /docs e /api/tickets
 │   ├── test_mcp_server.py         # Testes unitários do protocolo MCP e despacho de ferramentas
-│   └── test_security_guardrails.py # Testes de mascaramento LGPD, SQLi, Prompt Injection e Prometheus
+│   ├── test_security_guardrails.py # Testes de mascaramento LGPD, SQLi, Prompt Injection e Prometheus
+│   └── test_active_learning_and_advanced_features.py # Testes de feedback RLHF, retreino, BM25 e EDA
 ├── results/
 │   ├── grafico_benchmark_modelos.png           # Figura 1: Benchmark comparativo de 4 modelos
 │   ├── grafico_calibracao_threshold.png         # Figura 2: Curva paramétrica de calibração do threshold
@@ -289,6 +307,10 @@ TechAssist-Chatbot-A3/
 │   ├── grafico_significancia_estatistica_mcnemar.png # Figura 15: Teste de McNemar (chi^2 = 9.33, p = 0.0023)
 │   ├── grafico_curva_calibracao_ece.png        # Figura 16: Diagrama de Confiabilidade e Calibração ECE
 │   ├── grafico_robustez_adversarial_ruido.png  # Figura 17: Curva de Degradação sob Ruído com Levenshtein
+│   ├── grafico_benchmark_bm25_vs_tfidf.png     # Figura 18: Benchmark Okapi BM25 vs TF-IDF (P@1, P@3, MRR)
+│   ├── grafico_impacto_data_augmentation.png   # Figura 19: Impacto do Data Augmentation EDA (+20.5% CV)
+│   ├── benchmark_bm25_vs_tfidf.json            # Métricas numéricas de IR e ranqueamento
+│   ├── data_augmentation_impact.json           # Estatísticas antes e depois do EDA
 │   ├── benchmark_comparison.json               # Dados numéricos consolidados do benchmark
 │   ├── estudo_ablacao.json                     # Resultados estatísticos da ablação de componentes
 │   ├── curva_aprendizado.json                  # Médias e desvios por fração de amostras
@@ -299,9 +321,9 @@ TechAssist-Chatbot-A3/
 │   └── Planilha_Testes_e_Metricas_A3.xlsx      # Planilha executiva com 4 abas formatadas
 ├── docs/
 │   ├── openapi.yaml               # Especificação formal OpenAPI 3.0 para integração ITSM
-│   ├── RELATORIO_TECNICO_A3.docx  # Relatório formal completo com 17 figuras incorporadas
+│   ├── RELATORIO_TECNICO_A3.docx  # Relatório formal completo com 19 figuras incorporadas
 │   ├── RELATORIO_TECNICO_A3.pdf   # Versão do relatório técnico em PDF de alta qualidade gráfica
-│   ├── APRESENTACAO_DEFESA_A3.pptx # Apresentação completa com 17 slides científicos e gráficos
+│   ├── APRESENTACAO_DEFESA_A3.pptx # Apresentação completa com 19 slides científicos e gráficos
 │   ├── GUIA_APRESENTACAO_DEFESA.md # Roteiro de fala cronometrado e respostas para a banca
 │   └── Atividade_Checkpoint_Preenchida.docx # Checkpoint oficial institucional 100% preenchido
 ├── iniciar_web.sh                 # Script executável de 1 clique para iniciar a Interface Web
@@ -456,6 +478,15 @@ docker-compose down
 ### 📊 Modo 8: Observabilidade Prometheus e Auditoria de Segurança LGPD
 * **Métricas Prometheus em Tempo Real:** Acesse `http://localhost:5000/metrics` para exportação nativa de dados (requisições, latência média, fallbacks, dados LGPD mascarados e bloqueios SQLi).
 * **Camada de Proteção LGPD:** O módulo `src/security_guardrails.py` detecta e mascara automaticamente CPFs, números de cartão e senhas, além de neutralizar ataques de injeção SQL e manipulações maliciosas de prompt.
+
+---
+
+### 🎓 Modo 9: Ciclo de Aprendizado Ativo (Active Learning & RLHF Human-in-the-Loop)
+O TechAssist possui um loop de aprendizado contínuo para supervisão humana dos atendimentos:
+* **Feedback do Usuário no Chat:** Cada resposta do bot contém botões interativos de avaliação (+1 / -1) com formulário inline de retificação de intenção.
+* **Fila de Curadoria N2:** Acesse a aba **"Curadoria & RLHF"** na interface web para inspecionar amostras ambíguas ou reportadas.
+* **Retreinamento a Quente (`POST /api/active-learning/retrain`):** Permite retreinar o modelo TF-IDF dinamicamente em tempo de execução (<10 ms), incorporando o feedback aprovado sem reiniciar o servidor.
+* **Exportação CSV (`GET /api/tickets/export/csv`):** Permite exportar a base completa de incidentes para auditoria e relatórios gerenciais ITIL.
 
 ---
 

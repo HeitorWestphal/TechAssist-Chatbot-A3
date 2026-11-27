@@ -79,6 +79,10 @@
         <i class="fa-solid fa-shield-virus"></i>
         <span>Simulador de Ruído & Tolerância</span>
       </button>
+      <button onclick="switchTab('activeLearning')" id="tabBtnActiveLearning" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center space-x-1.5">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>Curadoria & RLHF</span>
+      </button>
     </nav>
 
     <!-- Controles Rápidos -->
@@ -182,10 +186,16 @@ Como posso ajudar você hoje?
           </h2>
           <p class="text-xs text-slate-500">Tickets persistidos no banco de dados local com auditoria ITIL</p>
         </div>
-        <button onclick="loadTickets()" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg shadow-sm flex items-center space-x-1">
-          <i class="fa-solid fa-arrows-rotate"></i>
-          <span>Atualizar Fila</span>
-        </button>
+        <div class="flex items-center space-x-2">
+          <a href="/api/tickets/export/csv" target="_blank" class="px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg shadow-sm flex items-center space-x-1.5 transition" title="Exportar histórico completo para planilha CSV">
+            <i class="fa-solid fa-file-csv"></i>
+            <span>Exportar CSV</span>
+          </a>
+          <button onclick="loadTickets()" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg shadow-sm flex items-center space-x-1">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Atualizar Fila</span>
+          </button>
+        </div>
       </div>
 
       <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
@@ -340,6 +350,85 @@ Como posso ajudar você hoje?
       </div>
     </div>
 
+    <!-- ABA 6: CURADORIA HUMANA & APRENDIZADO ATIVO (RLHF) -->
+    <div id="viewActiveLearning" class="hidden flex-1 flex flex-col p-6 max-w-5xl mx-auto w-full overflow-hidden">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800 flex items-center space-x-2">
+            <i class="fa-solid fa-graduation-cap text-blue-600"></i>
+            <span>Painel de Curadoria & Aprendizado Ativo (RLHF • Human-in-the-Loop)</span>
+          </h2>
+          <p class="text-xs text-slate-500">Supervisão humana de feedbacks, curadoria de predições ambíguas e retreinamento contínuo em tempo de execução</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="retrainModelLive()" id="btnRetrainModel" class="px-3.5 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 rounded-lg shadow-sm flex items-center space-x-1.5 transition">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Retreinar Modelo em Tempo Real</span>
+          </button>
+          <button onclick="loadActiveLearning()" class="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg shadow-sm flex items-center space-x-1">
+            <i class="fa-solid fa-sync"></i>
+            <span>Atualizar Fila</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Métricas do Ciclo de Feedback RLHF -->
+      <div class="grid grid-cols-5 gap-3 mb-4">
+        <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Total Feedbacks</span>
+          <span class="text-lg font-extrabold text-slate-800" id="alTotalFeedbacks">0</span>
+        </div>
+        <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Positivos (+1)</span>
+          <span class="text-lg font-extrabold text-emerald-600" id="alPositivos">0</span>
+        </div>
+        <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Negativos (-1)</span>
+          <span class="text-lg font-extrabold text-rose-600" id="alNegativos">0</span>
+        </div>
+        <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Fila Pendente</span>
+          <span class="text-lg font-extrabold text-amber-600" id="alPendentes">0</span>
+        </div>
+        <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-sm text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Aprovados Treino</span>
+          <span class="text-lg font-extrabold text-indigo-600" id="alAprovados">0</span>
+        </div>
+      </div>
+
+      <!-- Tabela da Fila de Aprendizado Ativo -->
+      <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
+            <i class="fa-solid fa-list-check text-blue-600"></i>
+            <span>Fila de Amostras para Homologação do Curador</span>
+          </span>
+          <span class="text-[11px] text-slate-500">Amostras aprovadas são injetadas diretamente na matriz TF-IDF</span>
+        </div>
+        <div class="overflow-y-auto flex-1 custom-scrollbar">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
+                <th class="p-3">ID</th>
+                <th class="p-3">Query do Usuário</th>
+                <th class="p-3">Intenção Prevista</th>
+                <th class="p-3">Confiança</th>
+                <th class="p-3">Score</th>
+                <th class="p-3">Correção Homologada</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="activeLearningTableBody" class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td colspan="8" class="p-8 text-center text-slate-400">Carregando fila de curadoria...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Barra Lateral de Telemetria e Gráficos Científicos (Direita) -->
     <div id="telemetrySidebar" class="w-96 bg-white border-l border-slate-200 p-4 flex flex-col overflow-y-auto custom-scrollbar transition-all duration-300 shrink-0">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
@@ -374,11 +463,11 @@ Como posso ajudar você hoje?
         </div>
       </div>
 
-      <!-- Galeria dos 17 Gráficos Científicos -->
+      <!-- Galeria dos 19 Gráficos Científicos -->
       <div class="space-y-3">
         <h3 class="text-xs font-bold text-slate-700 flex items-center space-x-1.5">
           <i class="fa-solid fa-images text-blue-600"></i>
-          <span>Galeria de 17 Gráficos Científicos</span>
+          <span>Galeria de 19 Gráficos Científicos</span>
         </h3>
 
         <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_benchmark_modelos.png', 'Figura 1 — Benchmark Comparativo de Arquiteturas')">
@@ -465,6 +554,16 @@ Como posso ajudar você hoje?
           <img src="/results/grafico_robustez_adversarial_ruido.png" class="w-full h-20 object-cover rounded-lg mb-1" />
           <span class="text-[11px] font-semibold text-slate-700 block">17. Robustez Adversarial a Typos</span>
         </div>
+
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_benchmark_bm25_vs_tfidf.png', 'Figura 18 — Benchmark de Recuperação Lexical Okapi BM25 vs TF-IDF')">
+          <img src="/results/grafico_benchmark_bm25_vs_tfidf.png" class="w-full h-20 object-cover rounded-lg mb-1" />
+          <span class="text-[11px] font-semibold text-slate-700 block">18. Benchmark Okapi BM25 vs TF-IDF</span>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-2 hover:border-blue-300 transition cursor-pointer" onclick="openImageModal('/results/grafico_impacto_data_augmentation.png', 'Figura 19 — Impacto do Data Augmentation Sintético EDA')">
+          <img src="/results/grafico_impacto_data_augmentation.png" class="w-full h-20 object-cover rounded-lg mb-1" />
+          <span class="text-[11px] font-semibold text-slate-700 block">19. Impacto Data Augmentation EDA</span>
+        </div>
       </div>
     </div>
   </div>
@@ -487,6 +586,8 @@ Como posso ajudar você hoje?
   <script>
     const sessionId = "web_session_" + Math.random().toString(36).substring(2, 9);
     let probChart = null;
+    let lastUserQueryText = "";
+    const activeInteractions = {};
 
     function initChart() {
       const ctx = document.getElementById('chartProbabilities').getContext('2d');
@@ -546,7 +647,7 @@ Como posso ajudar você hoje?
     }
 
     function switchTab(tab) {
-      const views = ['chat', 'tickets', 'tests', 'xai', 'adversarial'];
+      const views = ['chat', 'tickets', 'tests', 'xai', 'adversarial', 'activeLearning'];
       views.forEach(v => {
         const viewEl = document.getElementById('view' + v.charAt(0).toUpperCase() + v.slice(1));
         const btnEl = document.getElementById('tabBtn' + v.charAt(0).toUpperCase() + v.slice(1));
@@ -561,6 +662,7 @@ Como posso ajudar você hoje?
       if (tab === 'tickets') loadTickets();
       if (tab === 'xai') runXaiAnalysis();
       if (tab === 'adversarial') runAdversarialSim();
+      if (tab === 'activeLearning') loadActiveLearning();
     }
 
     function toggleSidebar() {
@@ -589,6 +691,7 @@ Como posso ajudar você hoje?
       const text = input.value.trim();
       if (!text) return;
 
+      lastUserQueryText = text;
       const spellcheckActive = document.getElementById('chkSpellcheck').checked;
       input.value = '';
       appendUserMessage(text);
@@ -608,7 +711,7 @@ Como posso ajudar você hoje?
         });
         const data = await response.json();
         indicator.classList.add('hidden');
-        appendBotMessage(data);
+        appendBotMessage(data, text);
 
         document.getElementById('metricLatency').innerText = (data.latencia_ms || 0.5).toFixed(2) + ' ms';
         document.getElementById('metricConfidence').innerText = (data.confianca * 100).toFixed(1) + '%';
@@ -622,7 +725,7 @@ Como posso ajudar você hoje?
           intencao: "erro_servidor",
           confianca: 0.0,
           is_fallback: true
-        });
+        }, text);
       }
     }
 
@@ -642,7 +745,7 @@ Como posso ajudar você hoje?
       container.scrollTop = container.scrollHeight;
     }
 
-    function appendBotMessage(data) {
+    function appendBotMessage(data, userQuery = "") {
       const container = document.getElementById('chatMessages');
       const div = document.createElement('div');
       div.className = "flex items-start space-x-3";
@@ -651,6 +754,14 @@ Como posso ajudar você hoje?
       const isFallback = data.is_fallback;
       const badgeColor = isFallback ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700";
       const icon = isFallback ? "fa-triangle-exclamation" : "fa-brain";
+      const msgId = "msg_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+
+      activeInteractions[msgId] = {
+        userQuery: userQuery || lastUserQueryText,
+        botResponse: data.resposta,
+        predictedIntent: data.intencao,
+        confidence: data.confianca || 0.0
+      };
 
       let suggestionsHtml = "";
       if (data.acoes_sugeridas && data.acoes_sugeridas.length > 0) {
@@ -669,13 +780,47 @@ Como posso ajudar você hoje?
             ${formatMarkdown(data.resposta)}
           </div>
           
-          <div class="flex items-center space-x-2 mt-2 text-[11px] text-slate-400">
+          <div class="flex items-center space-x-2 mt-2 text-[11px] text-slate-400 flex-wrap gap-y-1">
             <span class="px-2.5 py-0.5 rounded-md text-[10px] font-semibold ${badgeColor} flex items-center space-x-1">
               <i class="fa-solid ${icon}"></i>
               <span>Intenção: ${data.intencao} (${confidencePercent}%)</span>
             </span>
             ${data.latencia_ms ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-mono bg-slate-100 text-slate-600">${data.latencia_ms} ms</span>` : ''}
             ${data.protocolo ? `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-100 text-blue-700">Ticket #${data.protocolo}</span>` : ''}
+
+            <!-- Botões de Feedback RLHF -->
+            <div id="feedback_box_${msgId}" class="inline-flex items-center space-x-1.5 ml-auto bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-lg text-[10px]">
+              <span class="text-slate-400 text-[9px] uppercase font-bold">Feedback:</span>
+              <button onclick="submitFeedback('${msgId}', 1)" class="text-slate-400 hover:text-emerald-600 transition px-1" title="Resposta útil e correta (+1)">
+                <i class="fa-regular fa-thumbs-up"></i>
+              </button>
+              <button onclick="promptCorrection('${msgId}')" class="text-slate-400 hover:text-rose-600 transition px-1" title="Resposta incorreta ou imprecisa (-1)">
+                <i class="fa-regular fa-thumbs-down"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Caixa de Correção Inline (inicialmente oculta) -->
+          <div id="correction_box_${msgId}" class="hidden mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-2">
+            <span class="block text-[11px] font-bold text-slate-700">Qual seria a intenção correta desta mensagem?</span>
+            <div class="flex items-center space-x-2">
+              <select id="corr_select_${msgId}" class="flex-1 text-xs bg-white border border-slate-200 rounded-lg p-1.5">
+                <option value="redefinicao_senha">redefinicao_senha (Senha / AD)</option>
+                <option value="problema_vpn_acesso">problema_vpn_acesso (VPN / Token)</option>
+                <option value="lentidao_sistema">lentidao_sistema (Lentidão / Disco)</option>
+                <option value="instalacao_software">instalacao_software (Software / Apps)</option>
+                <option value="abertura_chamado">abertura_chamado (Abrir Ticket N2)</option>
+                <option value="horario_suporte">horario_suporte (Horário / SLA)</option>
+                <option value="saudacao">saudacao (Saudação)</option>
+                <option value="fora_escopo">fora_escopo (Outro / Fora de Escopo)</option>
+              </select>
+              <button onclick="submitCorrection('${msgId}')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs transition">
+                Salvar RLHF
+              </button>
+              <button onclick="document.getElementById('correction_box_${msgId}').classList.add('hidden')" class="px-2 py-1.5 text-slate-400 hover:text-slate-600 text-xs">
+                Cancelar
+              </button>
+            </div>
           </div>
 
           ${suggestionsHtml}
@@ -683,6 +828,162 @@ Como posso ajudar você hoje?
       `;
       container.appendChild(div);
       container.scrollTop = container.scrollHeight;
+    }
+
+    async function submitFeedback(msgId, score, correctedIntent = null, comment = "") {
+      const item = activeInteractions[msgId];
+      if (!item) return;
+
+      try {
+        await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session_id: sessionId,
+            user_query: item.userQuery,
+            bot_response: item.botResponse,
+            predicted_intent: item.predictedIntent,
+            confidence: item.confidence,
+            feedback_score: score,
+            user_comment: comment || (score > 0 ? "Avaliação positiva (RLHF)" : "Correção informada pelo usuário"),
+            suggested_intent: correctedIntent
+          })
+        });
+
+        const box = document.getElementById('feedback_box_' + msgId);
+        if (box) {
+          box.innerHTML = score > 0 
+            ? `<span class="text-emerald-600 font-bold flex items-center space-x-1"><i class="fa-solid fa-check"></i><span>Registrado (+1)</span></span>`
+            : `<span class="text-indigo-600 font-bold flex items-center space-x-1"><i class="fa-solid fa-graduation-cap"></i><span>Enviado p/ Curadoria</span></span>`;
+        }
+        const corrBox = document.getElementById('correction_box_' + msgId);
+        if (corrBox) corrBox.classList.add('hidden');
+      } catch (err) {
+        console.error("Erro ao enviar feedback RLHF:", err);
+      }
+    }
+
+    function promptCorrection(msgId) {
+      const corrBox = document.getElementById('correction_box_' + msgId);
+      if (corrBox) {
+        corrBox.classList.remove('hidden');
+      }
+    }
+
+    function submitCorrection(msgId) {
+      const select = document.getElementById('corr_select_' + msgId);
+      const chosenIntent = select ? select.value : null;
+      submitFeedback(msgId, -1, chosenIntent, "Intenção corrigida pelo usuário: " + chosenIntent);
+    }
+
+    async function loadActiveLearning() {
+      try {
+        const resStats = await fetch('/api/feedback/stats');
+        const stats = await resStats.json();
+
+        document.getElementById('alTotalFeedbacks').innerText = stats.total_feedbacks || 0;
+        document.getElementById('alPositivos').innerText = stats.positivos || 0;
+        document.getElementById('alNegativos').innerText = stats.negativos || 0;
+        document.getElementById('alPendentes').innerText = stats.pendentes || 0;
+        document.getElementById('alAprovados').innerText = stats.aprovados_treino || 0;
+
+        const resQueue = await fetch('/api/active-learning/queue');
+        const queueData = await resQueue.json();
+        const tbody = document.getElementById('activeLearningTableBody');
+        tbody.innerHTML = '';
+
+        if (!queueData.queue || queueData.queue.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400">Nenhuma amostra na fila de curadoria. Envie mensagens no chat e forneça feedbacks para popular o painel!</td></tr>`;
+          return;
+        }
+
+        queueData.queue.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50 transition";
+          const scoreBadge = item.feedback_score > 0 
+            ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700">+1 (Útil)</span>`
+            : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-700">-1 (Erro)</span>`;
+          
+          const statusBadge = item.status === 'APROVADO_TREINO'
+            ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">Aprovado Treino</span>`
+            : (item.status === 'DESCARTADO' 
+              ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">Descartado</span>`
+              : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">Pendente</span>`);
+
+          tr.innerHTML = `
+            <td class="p-3 font-mono font-bold text-slate-500">#${item.id}</td>
+            <td class="p-3 font-medium max-w-xs truncate" title="${escapeHtml(item.user_query)}">${escapeHtml(item.user_query)}</td>
+            <td class="p-3 font-mono text-slate-700">${item.predicted_intent}</td>
+            <td class="p-3 font-mono">${(item.confidence * 100).toFixed(1)}%</td>
+            <td class="p-3">${scoreBadge}</td>
+            <td class="p-3 font-bold text-indigo-700 font-mono">${item.suggested_intent || '-'}</td>
+            <td class="p-3">${statusBadge}</td>
+            <td class="p-3">
+              ${item.status === 'PENDENTE' ? `
+                <div class="flex items-center space-x-1">
+                  <select id="cur_select_${item.id}" class="text-[11px] p-1 border border-slate-200 rounded">
+                    <option value="${item.suggested_intent || item.predicted_intent}">Confirmar: ${item.suggested_intent || item.predicted_intent}</option>
+                    <option value="redefinicao_senha">redefinicao_senha</option>
+                    <option value="problema_vpn_acesso">problema_vpn_acesso</option>
+                    <option value="lentidao_sistema">lentidao_sistema</option>
+                    <option value="instalacao_software">instalacao_software</option>
+                    <option value="abertura_chamado">abertura_chamado</option>
+                    <option value="horario_suporte">horario_suporte</option>
+                    <option value="saudacao">saudacao</option>
+                    <option value="fora_escopo">fora_escopo</option>
+                  </select>
+                  <button onclick="approveActiveLearningItem(${item.id}, true)" class="px-2 py-1 text-[10px] font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded transition" title="Aprovar e adicionar ao corpus">Aprovar</button>
+                  <button onclick="approveActiveLearningItem(${item.id}, false)" class="px-2 py-1 text-[10px] text-slate-500 hover:text-rose-600 border border-slate-200 rounded transition" title="Descartar">Descartar</button>
+                </div>
+              ` : `<span class="text-slate-400 text-[10px]">Processado</span>`}
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("Erro ao carregar fila de aprendizado ativo:", err);
+      }
+    }
+
+    async function approveActiveLearningItem(feedbackId, approved) {
+      const select = document.getElementById('cur_select_' + feedbackId);
+      const chosen = select ? select.value : null;
+
+      try {
+        await fetch('/api/active-learning/approve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            feedback_id: feedbackId,
+            approved: approved,
+            corrected_intent: chosen
+          })
+        });
+        loadActiveLearning();
+      } catch (err) {
+        console.error("Erro ao aprovar item de curadoria:", err);
+      }
+    }
+
+    async function retrainModelLive() {
+      const btn = document.getElementById('btnRetrainModel');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Retreinando...</span>`;
+
+      try {
+        const res = await fetch('/api/active-learning/retrain', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        alert(`🎉 Modelo Retreinado com Sucesso!\n\n• Amostras no Corpus: ${data.total_exemplos_treino}\n• Amostras RLHF Incorporadas: ${data.exemplos_adicionados_rlhf}\n• Latência do Treino: ${data.tempo_treinamento_ms.toFixed(2)} ms`);
+        loadActiveLearning();
+      } catch (err) {
+        alert("Erro ao retreinar o modelo.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> <span>Retreinar Modelo em Tempo Real</span>`;
+      }
     }
 
     async function loadTickets() {

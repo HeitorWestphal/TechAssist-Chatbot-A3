@@ -8,9 +8,13 @@ import os
 import csv
 import json
 import time
+import numpy as np
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response
 from src.bot_engine import BotEngine
-from src.database import list_tickets, get_ticket_by_protocol, update_ticket_status, create_ticket
+from src.database import (
+    list_tickets, get_ticket_by_protocol, update_ticket_status, create_ticket,
+    add_feedback, list_feedback, approve_feedback_for_training, get_feedback_stats
+)
 from src.security_guardrails import security_guard
 from src.statistical_validation import inject_typo_noise
 
@@ -208,6 +212,107 @@ def change_ticket_status(protocolo):
     if success:
         return jsonify({"status": "updated", "protocolo": protocolo, "new_status": new_status})
     return jsonify({"error": "Ticket não encontrado."}), 404
+
+@app.route("/api/tickets/export/csv", methods=["GET"])
+def export_tickets_csv():
+    """Exporta a base de chamados em formato CSV para auditoria e governança ITIL."""
+    tickets = list_tickets()
+    output_csv = "id,protocolo,solicitante,departamento,descricao,intencao_detectada,confianca_ia,status,prioridade,data_criacao,data_resolucao\n"
+    for t in tickets:
+        output_csv += f"{t['id']},{t['protocolo']},\"{t['solicitante']}\",\"{t['departamento']}\",\"{t['descricao']}\",{t['intencao_detectada']},{t['confianca_ia']},{t['status']},{t['prioridade']},{t['data_criacao']},{t['data_resolucao'] or ''}\n"
+    return Response(
+        output_csv,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=chamados_itil_techassist.csv"}
+    )
+
+# -------------------------------------------------------------
+# ROTAS DE APRENDIZADO ATIVO E FEEDBACK HUMANO (RLHF / HITL)
+# -------------------------------------------------------------
+@app.route("/api/feedback", methods=["POST"])
+def submit_feedback():
+    """Recebe avaliação do usuário (+1 ou -1) sobre a assertividade da resposta."""
+    data = request.get_json() or {}
+    session_id = data.get("session_id", "web_default")
+    pergunta = data.get("pergunta", "").strip()
+    intencao_predita = data.get("intencao_predita", "desconhecido")
+    confianca = float(data.get("confianca", 0.0))
+    avaliacao = int(data.get("avaliacao", 1))
+    comentario = data.get("comentario")
+    intencao_corrigida = data.get("intencao_corrigida")
+
+    if not pergunta:
+        return jsonify({"error": "Pergunta obrigatória."}), 400
+
+    row_id = add_feedback(
+        session_id=session_id,
+        pergunta=pergunta,
+        intencao_predita=intencao_predita,
+        confianca_ia=confianca,
+        avaliacao=avaliacao,
+        comentario=comentario,
+        intencao_corrigida=intencao_corrigida
+    )
+    return jsonify({"status": "feedback_saved", "id": row_id})
+
+@app.route("/api/active-learning/queue", methods=["GET"])
+def active_learning_queue():
+    """Retorna a fila de amostras com feedback humano e as estatísticas de curadoria."""
+    status_filter = request.args.get("status")
+    items = list_feedback(status_filter)
+    stats = get_feedback_stats()
+    return jsonify({"stats": stats, "queue": items})
+
+@app.route("/api/active-learning/approve", methods=["POST"])
+def approve_sample():
+    """Aprova uma amostra com rótulo correto para incorporação ao modelo."""
+    data = request.get_json() or {}
+    feedback_id = int(data.get("id", 0))
+    intencao_corrigida = data.get("intencao_corrigida", "").strip()
+
+    if not feedback_id or not intencao_corrigida:
+        return jsonify({"error": "ID e intencao_corrigida são obrigatórios."}), 400
+
+    success = approve_feedback_for_training(feedback_id, intencao_corrigida)
+    if success:
+        return jsonify({"status": "approved", "id": feedback_id, "intencao_corrigida": intencao_corrigida})
+    return jsonify({"error": "Feedback não encontrado."}), 404
+
+@app.route("/api/active-learning/retrain", methods=["POST"])
+def retrain_active_learning():
+    """
+    Executa o retreinamento do classificador em tempo real incorporando
+    as sentenças aprovadas pela curadoria humana.
+    """
+    approved_feedbacks = list_feedback(status="APROVADO_TREINO")
+    
+    # Carrega textos originais
+    train_texts, train_labels = [], []
+    with open(DATASET_PATH, mode='r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            train_texts.append(r['texto'].strip())
+            train_labels.append(r['intencao'].strip())
+
+    # Adiciona as amostras aprovadas pelo analista N2
+    for item in approved_feedbacks:
+        lbl = item.get("intencao_corrigida") or item.get("intencao_predita")
+        train_texts.append(item["pergunta"])
+        train_labels.append(lbl)
+
+    # Re-treina o classificador
+    engine.classifier.tfidf_matrix = engine.classifier.vectorizer.fit_transform(train_texts)
+    engine.classifier.model.fit(engine.classifier.tfidf_matrix, train_labels)
+    engine.classifier.classes_ = list(engine.classifier.model.classes_)
+    engine.classifier.train_texts = train_texts
+    engine.classifier.train_labels = train_labels
+
+    return jsonify({
+        "status": "retrained_successfully",
+        "total_amostras_treinadas": len(train_texts),
+        "novas_amostras_adicionadas": len(approved_feedbacks),
+        "classes_ativas": list(engine.classifier.classes_)
+    })
 
 @app.route("/api/run-tests-live", methods=["POST"])
 def run_tests_live():

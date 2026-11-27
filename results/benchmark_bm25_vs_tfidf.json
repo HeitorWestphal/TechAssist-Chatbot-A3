@@ -1,0 +1,17 @@
+{
+  "TF-IDF Vetorial (Cosseno)": {
+    "p_at_1": 90.0,
+    "p_at_3": 95.0,
+    "mrr": 0.927
+  },
+  "Okapi BM25 Probabilístico": {
+    "p_at_1": 90.0,
+    "p_at_3": 95.0,
+    "mrr": 0.927
+  },
+  "Híbrido (TF-IDF + Okapi BM25)": {
+    "p_at_1": 90.0,
+    "p_at_3": 95.0,
+    "mrr": 0.927
+  }
+}
