@@ -21,9 +21,11 @@ def test_bot_session_lifecycle(bot):
 
     bot.process_message("Olá", session_id=session_id)
     assert len(bot.sessions[session_id]["history"]) == 1
+    assert len(bot.get_session_history(session_id)) == 1
 
     bot.reset_session(session_id)
     assert len(bot.sessions[session_id]["history"]) == 0
+    assert len(bot.get_session_history(session_id)) == 0
     assert bot.sessions[session_id]["state"] == "IDLE"
 
 def test_bot_saudacao(bot):

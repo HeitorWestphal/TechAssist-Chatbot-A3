@@ -40,6 +40,11 @@ class BotEngine:
             "telemetry": []
         }
 
+    def get_session_history(self, session_id: str) -> List[Dict[str, str]]:
+        """Retorna o histórico cronológico de mensagens de uma sessão."""
+        session = self.get_or_create_session(session_id)
+        return list(session.get("history", []))
+
     def process_message(self, user_message: str, session_id: str = "default", apply_spellcheck: bool = False) -> Dict[str, Any]:
         """
         Executa o pipeline conversacional completo com telemetria detalhada:
