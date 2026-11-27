@@ -1,0 +1,61 @@
+id,categoria_teste,pergunta,intencao_esperada,observacao
+1,Tipica,como faco para resetar minha senha de rede,redefinicao_senha,Pergunta classica de senha
+2,Tipica,minha vpn nao quer conectar de jeito nenhum,problema_vpn_acesso,Pergunta tipica de acesso remoto
+3,Tipica,meu notebook esta travando muito e lento,lentidao_sistema,Pergunta tipica de desempenho
+4,Tipica,como instalar o vscode na minha maquina,instalacao_software,Pergunta tipica de catalogo de software
+5,Tipica,quero abrir um chamado para o suporte tecnico,abertura_chamado,Solicitacao direta de abertura de chamado
+6,Tipica,qual o horario de funcionamento do suporte,horario_suporte,Consulta de horario de atendimento
+7,Tipica,ola boa tarde preciso de uma ajuda,saudacao,Saudacao e abertura de conversa
+8,Tipica,preciso de ajuda urgente com a minha conta,saudacao,Abertura generica de conversa
+9,Tipica,minha senha expirou e preciso trocar agora,redefinicao_senha,Solicitacao de expiracao de credencial
+10,Tipica,nao consigo baixar o teams no computador,instalacao_software,Dificuldade em download de ferramenta corporativa
+11,Reformulacao,esqueci a combinacao de letras e numeros do windows,redefinicao_senha,Parafrase de esqueci a senha
+12,Reformulacao,o forticlient da erro toda vez que tento logar,problema_vpn_acesso,Mencao especifica da ferramenta Forticlient
+13,Reformulacao,computador demora uma eternidade pra abrir qualquer programa,lentidao_sistema,Expressao coloquial de lentidao
+14,Reformulacao,preciso que coloquem o pacote office no meu computador,instalacao_software,Pedido de instalacao com expressao coloquial
+15,Reformulacao,quero conversar com uma pessoa de verdade da ti,abertura_chamado,Pedido de atendimento humano
+16,Reformulacao,o helpdesk atende no sabado a noite,horario_suporte,Pergunta sobre plantao e horario
+17,Reformulacao,meu acesso ao portal corporativo foi bloqueado,redefinicao_senha,Sinonimo de conta bloqueada
+18,Reformulacao,o anyconnect desconecta sozinho a cada cinco minutos,problema_vpn_acesso,Variacao de cliente VPN AnyConnect
+19,Reformulacao,a ventoinha do notebook nao para e tudo trava,lentidao_sistema,Sintoma fisico associado a lentidao de CPU
+20,Reformulacao,onde consigo autorizacao para baixar o docker desktop,instalacao_software,Catalogo de software corporativo
+21,Reformulacao,gostaria de falar com o atendente humano da fila n2,abertura_chamado,Solicitacao de transicao de nivel
+22,Reformulacao,o suporte funciona em feriados nacionais,horario_suporte,Consulta de expediente em feriados
+23,Reformulacao,como faco para desbloquear meu usuario de rede,redefinicao_senha,Desbloqueio de credencial
+24,Reformulacao,conexao remota caindo frequentemente em home office,problema_vpn_acesso,Acesso remoto em home office
+25,Reformulacao,uso de memoria ram esta em cem por cento constante,lentidao_sistema,Sintoma tecnico de sobrecarga de hardware
+26,Ortografia_Giria,esquessi a ssnha do meu usuario,redefinicao_senha,Erros tipograficos severos de digitacao
+27,Ortografia_Giria,vpn ta caido nao conecta nada socorro,problema_vpn_acesso,Linguagem informal e erro gramatical
+28,Ortografia_Giria,meu pc ta uma carroca de tao lerdo,lentidao_sistema,Giria brasileira para computador lento
+29,Ortografia_Giria,da pra baxa o paiton no meu note,instalacao_software,Fonetica coloquial para instalacao de software
+30,Ortografia_Giria,abre um tichet pra mim ae pfvr,abertura_chamado,Giria abreviada de internet
+31,Ortografia_Giria,que horas abre essa bagaca do suporte,horario_suporte,Coloquialismo informal para horario
+32,Ortografia_Giria,opa meu consagrado blz,saudacao,Giria popular brasileira de saudacao
+33,Ortografia_Giria,bloquio minha sennha do pc,redefinicao_senha,Erros duplos de digitacao
+34,Ortografia_Giria,essa vpn fura zoi caiu de novo,problema_vpn_acesso,Expressao coloquial de insatisfacao com VPN
+35,Ortografia_Giria,maquininha ta travando que nem lesma,lentidao_sistema,Metafora coloquial de lentidao
+36,Ortografia_Giria,como coloco o slak e o discor no trampo,instalacao_software,Fonetica informal de softwares de comunicacao
+37,Ortografia_Giria,preciso duma pessoa humana urgente na ti,abertura_chamado,Pedido coloquial de suporte humano
+38,Ortografia_Giria,atendimento funciona de madruga,horario_suporte,Pergunta informal sobre turno da madrugada
+39,Ortografia_Giria,fala galera do suporte td certinho,saudacao,Saudacao informal
+40,Ortografia_Giria,reseta meu login rapidinho,redefinicao_senha,Coloquialismo de redefinicao de login
+41,Ambiguidade,meu sistema nao esta entrando de manha,problema_vpn_acesso,Pode ser VPN ou senha; VPN/acesso remoto prioritario
+42,Ambiguidade,preciso de uma ajuda urgente com o computador,saudacao,Generica sem especificar o problema
+43,Ambiguidade,o programa parou de funcionar e travou,lentidao_sistema,Transita entre software e travamento do sistema
+44,Ambiguidade,nao consigo trabalhar hoje ta tudo parado,abertura_chamado,Impacto critico generalizado
+45,Ambiguidade,quando voces estao disponiveis para resolver meu problema,horario_suporte,Duplo sentido entre horario e atendimento
+46,Ambiguidade,o aplicativo nao quer abrir na minha tela,instalacao_software,Transita entre software corrompido e lentidao
+47,Ambiguidade,preciso trocar minhas coisas para acessar a empresa,redefinicao_senha,Terminologia vaga para credencial
+48,Ambiguidade,o tunel caiu e nao volta mais,problema_vpn_acesso,Jargao de rede para conexao VPN
+49,Ambiguidade,maquina com tela congelada sem resposta,lentidao_sistema,Travamento de sistema
+50,Ambiguidade,tem alguem online agora pra me atender,horario_suporte,Consulta de disponibilidade imediata
+51,Fora_Escopo,qual a receita de bolo de cenoura com cobertura,fora_escopo,Pergunta culinaria fora de TI
+52,Fora_Escopo,quanto custa o conserto da lataria de um carro,fora_escopo,Pergunta mecanica automotiva fora de TI
+53,Fora_Escopo,quem venceu o jogo da libertadores ontem,fora_escopo,Futebol fora de TI
+54,Fora_Escopo,qual a cotacao do dolar comercial hoje,fora_escopo,Economia e financas fora de TI
+55,Fora_Escopo,como faco para cancelar minha reserva de hotel,fora_escopo,Turismo e hotelaria fora de TI
+56,Fora_Escopo,qual a previsão do tempo para sao paulo amanha,fora_escopo,Meteorologia fora de TI
+57,Fora_Escopo,qual a melhor marca de racao para cachorro filhote,fora_escopo,Veterinaria e pets fora de TI
+58,Fora_Escopo,me ensina a tocar violao com cifras faceis,fora_escopo,Musica e instrumentos fora de TI
+59,Fora_Escopo,quantos quilometros tem a distancia da terra ate a lua,fora_escopo,Astronomia fora de TI
+60,Fora_Escopo,como plantar tomate no quintal de casa,fora_escopo,Agricultura e jardinagem fora de TI

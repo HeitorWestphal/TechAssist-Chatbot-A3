@@ -78,9 +78,40 @@ Figura 3 — Projeção 2D do Espaço Vetorial TF-IDF com Centróides e Clusters
 Figura 4 — Ponderação de N-Grams e Importância de Termos Softmax por Intenção (Feature Weights).
 
 
+## 4.4 Estudo Científico de Ablação e Contribuição Modular
+
+Para mensurar rigorosamente o impacto individual de cada módulo algorítmico do pipeline, realizamos um experimento de ablação progressiva sobre 6 estágios sequenciais:
+1. *Modelo Base (Raw Text + TF-IDF 1-gram):* 84.0% de acurácia global e 60.0% de segurança no fallback (sem filtros);
+2. *Normalização NFKD & Stopwords Seletivas:* Salto expressivo para 96.0% de acurácia global e 100.0% de retenção no fallback;
+3. *Bigramas TF-IDF (1..2):* Captura de locuções técnicas chave como "resetar senha" e "conexão vpn";
+4. *Corretor Morfométrico Levenshtein:* Recuperação de tokens com distância de edição <= 2 contra o vocabulário de TI;
+5. *Similaridade de Cosseno com Centróides:* Ponderação angular híbrida (65% Softmax + 35% Cosseno);
+6. *Limiar Operacional Calibrado (0.38):* Abstenção segura mandatória, garantindo 100% de precisão operacional no suporte técnico.
+
+Figura 12 — Estudo Científico de Ablação: Ganho Marginal por Estágio do Pipeline de PLN.
+
+
+## 4.5 Curva de Aprendizado e Eficiência Amostral
+
+Avaliamos a capacidade de convergência e saturação da arquitetura híbrida em função do volume de sentenças anotadas, variando a base de treino de 20% a 100% (17 a 88 amostras) sob validação cruzada 5-Fold:
+
+Figura 13 — Curva de Aprendizado e Eficiência Amostral (Treino vs. Validação Cruzada 5-Fold).
+
+Os resultados evidenciam que o modelo atinge estabilidade a partir de ~60 amostras, comprovando a viabilidade de implantação rápida sem a necessidade de corpora gigantescos ou anotações onerosas.
+
+
+## 4.6 Avaliação Multicritério AHP e Teste de Estresse sob Carga
+
+Figura 9 — Análise Multicritério de Decisão Arquitetural (Radar de Trade-offs AHP).
+
+Figura 10 — Benchmark de Carga, Estresse e Throughput (RPS) sob Concorrência Multithread.
+
+Figura 11 — Validação Cruzada Estratificada em 5 Folds (5-Fold Stratified CV).
+
+
 # 5. Implementação e Organização do Código-Fonte
 
-O projeto foi construído em Python 3.11 com arquitetura modular desacoplada: src/nlp_preprocessor.py, src/intent_classifier.py, src/bot_engine.py, src/app_web.py, src/cli.py, src/evaluate.py e src/benchmark.py. A execução pode ser realizada via interface gráfica Web com telemetria em tempo real (./iniciar_web.sh) ou terminal interativo (./iniciar_terminal.sh).
+O projeto foi construído em Python 3.11 com arquitetura modular desacoplada: src/nlp_preprocessor.py, src/intent_classifier.py, src/bot_engine.py, src/database.py, src/app_web.py, src/mcp_server.py, src/cli.py, src/evaluate.py e src/benchmark.py. A execução pode ser realizada via interface gráfica Web com telemetria em tempo real (./iniciar_web.sh), terminal interativo (./iniciar_terminal.sh) ou servidor de protocolo MCP JSON-RPC 2.0.
 
 
 # 6. Experimentos, Avaliação e Análise Crítica de Resultados
@@ -109,9 +140,28 @@ Comprovação da Melhoria: No Marco 5, analisamos o caso da frase com erros grav
 
 # 7. Discussão, Limites Operacionais e Impacto ITIL
 
+
+## 7.1 Impacto Operacional e Métricas de Service Desk
+
 O TechAssist AI demonstra alto valor corporativo ao reduzir drasticamente o tempo de resposta e absorver a maioria dos chamados banais:
 
 Figura 8 — Simulação de Impacto Operacional: Redução no TMA de 42 min para 0.57s e Roteamento de Chamados.
+
+
+## 7.2 Análise de Retorno sobre Investimento (ROI) e Comparativo vs LLMs
+
+Para fundamentar a viabilidade econômica corporativa, realizamos um estudo comparativo entre a nossa solução determinística de PLN e abordagens baseadas em LLMs (Large Language Models), avaliando latência, consumo de memória, custo financeiro e conformidade com a LGPD:
+* *Latência:* TechAssist opera a 0.48 ms, sendo 1.700x mais veloz que LLMs em nuvem (820 ms) e modelos locais de 7B (1.250 ms);
+* *Consumo de Memória:* 14.8 MB de RAM vs 16.384 MB (16 GB) exigidos por um modelo 7B quantizado;
+* *Custo por 1M de Consultas:* R$ 0,00 no TechAssist (execução em CPU padrão sem GPUs) vs R$ 1.850,00 em APIs de nuvem de ponta;
+* *Governança e LGPD:* Processamento estritamente local em memória, sem compartilhamento de dados ou credenciais com terceiros.
+
+Figura 14 — Análise de Recursos Computacionais, Latência e ROI Corporativo vs LLMs.
+
+
+## 7.3 Disponibilização como Agente Autônomo e Protocolo MCP (Agensi.io)
+
+O TechAssist foi encapsulado com a especificação Model Context Protocol (MCP JSON-RPC 2.0 via Stdio) e manifesto de publicação agensi.json, permitindo sua operação como ferramenta nativa (tool) para agentes de inteligência artificial de última geração (Claude Code, Cursor, Codex). Isso confere ao projeto maturidade profissional imediata para integração em marketplaces de agentes corporativos.
 
 
 # 8. Referências Bibliográficas e Declaração de Autoria

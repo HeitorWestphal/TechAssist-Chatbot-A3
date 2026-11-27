@@ -1,0 +1,38 @@
+[
+  {
+    "estagio": "1. Modelo Base (Raw Text + TF-IDF 1-gram)",
+    "acuracia_global": 84.0,
+    "acuracia_tecnica": 90.0,
+    "seguranca_fallback": 60.0
+  },
+  {
+    "estagio": "2. + Normalização NFKD & Stopwords Seletivas",
+    "acuracia_global": 96.0,
+    "acuracia_tecnica": 95.0,
+    "seguranca_fallback": 100.0
+  },
+  {
+    "estagio": "3. + Bigramas TF-IDF (ngram_range 1..2)",
+    "acuracia_global": 96.0,
+    "acuracia_tecnica": 95.0,
+    "seguranca_fallback": 100.0
+  },
+  {
+    "estagio": "4. + Corretor Levenshtein (Tolerância Morfométrica)",
+    "acuracia_global": 96.0,
+    "acuracia_tecnica": 95.0,
+    "seguranca_fallback": 100.0
+  },
+  {
+    "estagio": "5. + Similaridade Cosseno (Score Vetorial Híbrido)",
+    "acuracia_global": 96.0,
+    "acuracia_tecnica": 95.0,
+    "seguranca_fallback": 100.0
+  },
+  {
+    "estagio": "6. + Limiar Operacional (Threshold Calibrado 0.38)",
+    "acuracia_global": 76.0,
+    "acuracia_tecnica": 70.0,
+    "seguranca_fallback": 100.0
+  }
+]

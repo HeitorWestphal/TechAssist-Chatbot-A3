@@ -1,0 +1,99 @@
+{
+  "$schema": "https://agensi.io/schemas/skill-manifest.json",
+  "name": "techassist-ai-helpdesk",
+  "version": "1.0.0",
+  "displayName": "TechAssist AI — Level 1 IT Helpdesk & Support Agent",
+  "description": "Enterprise-grade Tier-1 IT Support Chatbot with sub-millisecond TF-IDF NLP inference, calibrated confidence threshold fallback, SQLite ticket management, and full ITIL v4 compliance.",
+  "author": {
+    "name": "Heitor Della Barba Westphal",
+    "github": "https://github.com/HeitorWestphal",
+    "email": "heitordbw2006@gmail.com"
+  },
+  "pricing": {
+    "model": "freemium",
+    "basePrice": 0.0,
+    "perCallPrice": 0.0,
+    "currency": "USD"
+  },
+  "category": "developer-tools",
+  "tags": [
+    "it-support",
+    "helpdesk",
+    "nlp",
+    "tier-1",
+    "mcp",
+    "itil",
+    "claude-code",
+    "cursor",
+    "codex"
+  ],
+  "compatibility": {
+    "mcp": true,
+    "claudeCode": true,
+    "cursor": true,
+    "codex": true,
+    "antigravity": true
+  },
+  "entrypoint": "src/mcp_server.py",
+  "tools": [
+    {
+      "name": "techassist_classify_intent",
+      "description": "Classifies an incoming IT support request using calibrated TF-IDF and Softmax probabilities (<1ms latency) with out-of-domain fallback detection.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "The user query or issue description." },
+          "apply_spellcheck": { "type": "boolean", "default": false, "description": "Enable Levenshtein typo correction against canonical IT vocabulary." }
+        },
+        "required": ["query"]
+      }
+    },
+    {
+      "name": "techassist_get_solution",
+      "description": "Retrieves step-by-step IT troubleshooting guidance and knowledge base procedures for a classified intent.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "intent": { "type": "string", "description": "Canonical intent identifier (e.g., redefinicao_senha, problema_vpn_acesso, lentidao_sistema)." }
+        },
+        "required": ["intent"]
+      }
+    },
+    {
+      "name": "techassist_create_ticket",
+      "description": "Creates and escalates a formal Level-2 IT support ticket (#TK-XXXXX) persisted in relational SQLite database with full ITIL audit trail.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "description": "Detailed description of the hardware, network, or software incident." },
+          "requester": { "type": "string", "default": "Corporate User", "description": "Employee or requester name." },
+          "department": { "type": "string", "default": "General Support", "description": "Company department." },
+          "priority": { "type": "string", "enum": ["BAIXA", "PADRAO", "ALTA", "CRITICA"], "default": "PADRAO" }
+        },
+        "required": ["description"]
+      }
+    },
+    {
+      "name": "techassist_list_tickets",
+      "description": "Lists persisted IT tickets filtered by status (ABERTO, EM_ATENDIMENTO, RESOLVIDO) or priority.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["ABERTO", "EM_ATENDIMENTO", "RESOLVIDO"], "description": "Optional filter by ticket status." },
+          "priority": { "type": "string", "enum": ["BAIXA", "PADRAO", "ALTA", "CRITICA"], "description": "Optional filter by ticket priority." }
+        }
+      }
+    },
+    {
+      "name": "techassist_explain_prediction",
+      "description": "Explainable AI (XAI) feature attribution showing token TF-IDF weights and Softmax distribution.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Text query to inspect." }
+        },
+        "required": ["query"]
+      }
+    }
+  ]
+}

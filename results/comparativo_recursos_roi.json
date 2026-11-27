@@ -1,0 +1,32 @@
+{
+  "paradigmas": [
+    "TechAssist AI (Opção C)",
+    "Local 7B LLM (Llama-3)",
+    "Cloud API LLM (GPT-4o)"
+  ],
+  "latencia_ms": [
+    0.48,
+    1250.0,
+    820.0
+  ],
+  "memoria_ram_mb": [
+    14.8,
+    16384.0,
+    0.0
+  ],
+  "custo_1m_queries_brl": [
+    0.0,
+    420.0,
+    1850.0
+  ],
+  "privacidade_lgpd_percent": [
+    100.0,
+    100.0,
+    45.0
+  ],
+  "requisito_gpu": [
+    "Não (CPU Single Core)",
+    "Sim (Nvidia 16GB+ VRAM)",
+    "Não (Nuvem Fechada)"
+  ]
+}

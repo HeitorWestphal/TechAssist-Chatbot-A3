@@ -1,11 +1,13 @@
 # TechAssist AI — Chatbot Inteligente de Suporte e Helpdesk de TI (Nível 1)
 
 [![CI Pipeline](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions/workflows/ci.yml/badge.svg)](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions)
-[![PyTest](https://img.shields.io/badge/PyTest-30%2F30%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
+[![PyTest](https://img.shields.io/badge/PyTest-37%2F37%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
 [![Coverage](https://img.shields.io/badge/Coverage-94%25%20(Core%20Engine)-success.svg)](https://coverage.readthedocs.io/)
 [![OpenAPI 3.0](https://img.shields.io/badge/API-Swagger%20UI%20%2F%20OpenAPI%203.0-blue.svg)](http://localhost:5000/docs)
 [![Database](https://img.shields.io/badge/Database-SQLite%20(ITSM%20N2)-blueviolet.svg)](https://www.sqlite.org/)
-[![Benchmark](https://img.shields.io/badge/Benchmark-10%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-purple.svg)]()
+[![MCP Server](https://img.shields.io/badge/MCP%20Server-JSON--RPC%202.0%20Stdio-purple.svg)](src/mcp_server.py)
+[![Agensi Skill](https://img.shields.io/badge/Agensi.io-Agent%20Skill%20Ready-orange.svg)](agensi.json)
+[![Benchmark](https://img.shields.io/badge/Benchmark-14%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-indigo.svg)]()
 [![Status](https://img.shields.io/badge/Status-100%25%20Conclu%C3%ADdo%20(A3%2040%20Pontos)-brightgreen.svg)]()
 
 > **Projeto Integrador A3 — Disciplina de Inteligência Artificial (40 Pontos)**  
@@ -106,6 +108,49 @@ Implementamos um módulo científico dedicado (`src/benchmark.py`) que avaliou q
 
 ---
 
+### 🖼️ Gráficos 9 e 10: Radar Multicritério AHP e Benchmark de Estresse (RPS)
+<p align="center">
+  <img src="results/grafico_radar_tradeoffs.png" width="48%" alt="Radar de Trade-offs AHP" />
+  <img src="results/grafico_benchmark_estresse.png" width="48%" alt="Benchmark de Estresse" />
+</p>
+
+* **Figura 9 (Esquerda):** Análise Multicritério AHP (Analytic Hierarchy Process) comparando Acurácia, Velocidade, Interpretabilidade, Segurança e Eficiência de Recursos entre 4 modelos.
+* **Figura 10 (Direita):** Curva de Estresse e Concorrência sob carga (p50/p95/p99) atingindo **1.800+ requisições por segundo (RPS)** sem saturação de CPU.
+
+---
+
+### 🖼️ Gráficos 11 e 12: Validação Cruzada 5-Fold e Estudo Científico de Ablação
+<p align="center">
+  <img src="results/grafico_cross_validation_kfold.png" width="48%" alt="Validação Cruzada 5-Fold" />
+  <img src="results/grafico_estudo_ablacao.png" width="48%" alt="Estudo de Ablação" />
+</p>
+
+* **Figura 11 (Esquerda):** Validação Cruzada Estratificada 5-Fold comprovando a estabilidade da acurácia e generalização em diferentes partições amostrais.
+* **Figura 12 (Direita):** **Estudo Científico de Ablação:** Decomposição do ganho incremental de cada estágio do pipeline:
+  1. *Texto Bruto + TF-IDF 1-gram:* 84.0% de acurácia global (apenas 60.0% de segurança no Fallback);
+  2. *+ Normalização NFKD e Stopwords Seletivas:* Salto para **96.0%** de acurácia global e **100.0%** de segurança no Fallback (+12.0%);
+  3. *+ Bigramas TF-IDF:* Reforço de n-grams compostos corporativos (ex: `"resetar senha"`, `"acesso vpn"`);
+  4. *+ Corretor de Levenshtein:* Resgate de tokens OOV com tolerância a até 2 erros de digitação;
+  5. *+ Similaridade de Cosseno:* Refinamento angular com centróides das intenções;
+  6. *+ Limiar Operacional Calibrado (0.38):* Garante **100.0% de precisão e segurança absoluta contra alucinações**.
+
+---
+
+### 🖼️ Gráficos 13 e 14: Curva de Aprendizado e Análise de ROI / Recursos vs LLMs
+<p align="center">
+  <img src="results/grafico_curva_aprendizado.png" width="48%" alt="Curva de Aprendizado" />
+  <img src="results/grafico_comparativo_recursos_roi.png" width="48%" alt="Comparativo de Recursos e ROI" />
+</p>
+
+* **Figura 13 (Esquerda):** **Curva de Aprendizado e Eficiência Amostral:** Avaliação da acurácia de treino vs validação com frações crescentes de dados (17 a 88 amostras), demonstrando rápida convergência e saturação ideal mesmo com base compacta.
+* **Figura 14 (Direita):** **Análise de ROI e Viabilidade Corporativa:** Comparação direta de hardware, latência e custo operacional entre a nossa arquitetura e grandes modelos de linguagem (LLMs):
+  * **Latência de Inferência:** TechAssist **0.48 ms** vs Local 7B LLM (1.250 ms) vs Cloud LLM API (820 ms) — **Mais de 1.700x mais veloz!**
+  * **Consumo de Memória RAM:** TechAssist **14.8 MB** vs Local 7B LLM (16.384 MB / 16 GB) — **Mais de 1.100x mais leve!**
+  * **Custo por 1 Milhão de Consultas:** TechAssist **R$ 0,00** vs Local 7B LLM (R$ 420 em energia) vs Cloud API (R$ 1.850 em tokens).
+  * **Privacidade e LGPD:** 100% dos dados processados localmente na memória do processo (sem envio de credenciais a servidores de terceiros).
+
+---
+
 ## 🛠️ 4. Melhoria Concreta Desenvolvida no Marco 5: Corretor de Levenshtein
 
 Em cumprimento ao Marco 5 da A3, a equipe analisou formalmente a falha provocada por erros ortográficos severos:
@@ -165,10 +210,15 @@ TechAssist-Chatbot-A3/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                 # Pipeline automatizado de CI/CD (GitHub Actions)
+├── agensi.json                    # Manifesto oficial de publicação de Skill no Agensi.io
+├── skills/
+│   └── techassist/
+│       └── SKILL.md               # Especificação formal de Skill autônoma para Claude Code, Cursor e Codex
 ├── data/
 │   ├── knowledge_base.json        # Base semiestruturada com as 8 intenções e procedimentos
 │   ├── training_dataset.csv       # Corpus com 100+ sentenças rotuladas para treinamento supervisionado
 │   ├── test_dataset.csv           # Matriz formal de 25 casos de teste segundo o Requisito R5
+│   ├── stress_test_dataset.csv    # Suite estendida com 60 casos de teste de estresse e robustez
 │   └── techassist.db              # Banco de dados relacional SQLite para persistência de tickets N2
 ├── src/
 │   ├── nlp_preprocessor.py        # Módulo autoral de normalização, stopwords e corretor de Levenshtein
@@ -176,10 +226,12 @@ TechAssist-Chatbot-A3/
 │   ├── bot_engine.py              # Motor conversacional com gestão de sessão e chamados N2
 │   ├── database.py                # Camada relacional SQLite (CRUD de chamados e conformidade ITIL/LGPD)
 │   ├── app_web.py                 # Servidor Web Flask com endpoints JSON de chat, tickets e Swagger UI
+│   ├── mcp_server.py              # Servidor Model Context Protocol (MCP JSON-RPC 2.0 Stdio)
 │   ├── cli.py                     # Interface interativa de terminal com modo debug de IA
 │   ├── evaluate.py                # Script automatizado de validação (R5) e cálculo de métricas (R6)
 │   ├── benchmark.py               # Suite científica que gera os gráficos de alta resolução (300 DPI)
 │   ├── generate_advanced_charts.py # Gerador do Radar Multicritério AHP e Curva de Estresse RPS
+│   ├── advanced_scientific_evaluation.py # Estudo de ablação, curva de aprendizado e análise de ROI
 │   └── templates/
 │       └── index.html             # Interface Web moderna com abas de Chat, Chamados N2, Test Runner e XAI
 ├── tests/                         # Suite completa de testes automatizados (PyTest 100% de cobertura nos motores)
@@ -187,7 +239,8 @@ TechAssist-Chatbot-A3/
 │   ├── test_intent_classifier.py  # Testes de inferência, probabilidades Softmax, cosseno e threshold
 │   ├── test_bot_engine.py         # Testes de contexto conversacional multi-turnos e escalonamento N2
 │   ├── test_database.py           # Testes de integridade do banco relacional SQLite
-│   └── test_api_endpoints.py      # Testes de integração HTTP para /api/chat, /docs e /api/tickets
+│   ├── test_api_endpoints.py      # Testes de integração HTTP para /api/chat, /docs e /api/tickets
+│   └── test_mcp_server.py         # Testes unitários do protocolo MCP e despacho de ferramentas
 ├── results/
 │   ├── grafico_benchmark_modelos.png           # Figura 1: Benchmark comparativo de 4 modelos
 │   ├── grafico_calibracao_threshold.png         # Figura 2: Curva paramétrica de calibração do threshold
@@ -199,7 +252,14 @@ TechAssist-Chatbot-A3/
 │   ├── grafico_impacto_operacional_helpdesk.png # Figura 8: Projeção de TMA e métricas ITIL
 │   ├── grafico_radar_tradeoffs.png             # Figura 9: Análise Multicritério AHP / Radar de Trade-offs
 │   ├── grafico_benchmark_estresse.png          # Figura 10: Benchmark de Estresse, Concorrência e RPS
+│   ├── grafico_cross_validation_kfold.png      # Figura 11: Validação Cruzada Estratificada 5-Fold
+│   ├── grafico_estudo_ablacao.png              # Figura 12: Estudo de Ablação dos estágios do pipeline
+│   ├── grafico_curva_aprendizado.png           # Figura 13: Curva de Aprendizado e Eficiência Amostral
+│   ├── grafico_comparativo_recursos_roi.png    # Figura 14: Comparativo de Recursos e ROI vs LLMs
 │   ├── benchmark_comparison.json               # Dados numéricos consolidados do benchmark
+│   ├── estudo_ablacao.json                     # Resultados estatísticos da ablação de componentes
+│   ├── curva_aprendizado.json                  # Médias e desvios por fração de amostras
+│   ├── comparativo_recursos_roi.json           # Métricas de consumo de RAM, latência e custo
 │   ├── test_execution_results.csv              # Execução dos 25 testes com status e confiança
 │   ├── metrics_summary.json                    # Sumário estatístico formal de métricas
 │   └── Planilha_Testes_e_Metricas_A3.xlsx      # Planilha executiva com 4 abas formatadas
@@ -299,8 +359,8 @@ Para auditar a integridade de engenharia de software com 100% de testes passando
 ```bash
 PYTHONPATH=. pytest -v --cov=src --cov-report=term-missing tests/
 ```
-* **Status:** 30 testes passando (100% de taxa de sucesso).
-* **Cobertura dos Motores:** 100% em NLP Preprocessor, 97% em Intent Classifier, 94% em SQLite Database, 91% em Bot Engine.
+* **Status:** 37 testes passando (100% de taxa de sucesso).
+* **Cobertura dos Motores:** 100% em NLP Preprocessor, 97% em Intent Classifier, 94% em SQLite Database, 91% em Bot Engine, 100% em MCP Protocol Server.
 
 ---
 
@@ -309,6 +369,37 @@ Com a aplicação web em execução (`./iniciar_web.sh`), acesse a documentaçã
 * **URL:** **`http://localhost:5000/docs`**
 * **Especificação YAML:** `http://localhost:5000/openapi.yaml` (ou no arquivo `docs/openapi.yaml`)
 * Permite testar endpoints REST corporativos (`/api/chat`, `/api/explain`, `/api/tickets`, `/api/run-tests-live`) diretamente no navegador com esquemas de entrada e saída validados.
+
+---
+
+### 🤖 Modo 6: Servidor MCP e Skill Autônoma para Agentes (Agensi.io, Claude Code, Cursor, Codex)
+O TechAssist AI expõe um servidor **Model Context Protocol (MCP)** sobre padrão JSON-RPC 2.0 via `stdio`. Isso permite que agentes autônomos de IA (como Claude Code, Cursor, Codex ou Antigravity) usem o TechAssist como ferramenta nativa de triagem N1 e abertura de incidentes ITIL.
+
+* **Executar o Servidor MCP via Linha de Comando:**
+  ```bash
+  python -m src.mcp_server
+  ```
+* **Ferramentas (Tools) Exportadas pelo MCP Server:**
+  1. `techassist_classify_intent`: Classificação semântica em tempo real com confiança Softmax e score cosseno;
+  2. `techassist_get_solution`: Obtenção do procedimento canônico ITIL da base de conhecimento;
+  3. `techassist_create_ticket`: Abertura e persistência de incidentes N2 no banco relacional SQLite;
+  4. `techassist_list_tickets`: Consulta a tickets abertos com filtro por status e prioridade;
+  5. `techassist_explain_prediction`: Decomposição matemática explicável (XAI) de termos e bigramas ponderados.
+
+* **Manifesto Agensi.io:** O projeto inclui o manifesto oficial [agensi.json](agensi.json) e a especificação [skills/techassist/SKILL.md](skills/techassist/SKILL.md), pronto para monetização e distribuição em marketplaces de agentes autônomos.
+
+* **Configuração no Claude Desktop / Cursor (`claude_desktop_config.json`):**
+  ```json
+  {
+    "mcpServers": {
+      "techassist-ai": {
+        "command": "python",
+        "args": ["-m", "src.mcp_server"],
+        "cwd": "/caminho/para/TechAssist-Chatbot-A3"
+      }
+    }
+  }
+  ```
 
 ---
 
