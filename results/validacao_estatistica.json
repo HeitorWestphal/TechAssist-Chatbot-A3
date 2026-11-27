@@ -1,0 +1,66 @@
+{
+  "mcnemar": {
+    "contingencia": {
+      "ambos_corretos": 29,
+      "apenas_opcao_c": 3,
+      "apenas_outro": 18,
+      "ambos_errados": 10
+    },
+    "mcnemar_chi2": 9.3333,
+    "p_value": 0.0023,
+    "significativo_95": true
+  },
+  "calibracao_ece": {
+    "expected_calibration_error": 0.2601,
+    "brier_score": 0.2231,
+    "bin_accuracies": [
+      0.0,
+      0.3636,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "bin_confidences": [
+      0.1,
+      0.344,
+      0.4837,
+      0.6917,
+      0.8021
+    ]
+  },
+  "robustez_ruido": {
+    "noise_rates_percent": [
+      0.0,
+      5.0,
+      10.0,
+      15.0,
+      20.0,
+      25.0,
+      30.0,
+      35.0,
+      40.0
+    ],
+    "acuracia_com_levenshtein": [
+      72.0,
+      68.0,
+      60.0,
+      52.0,
+      72.0,
+      48.0,
+      32.0,
+      48.0,
+      32.0
+    ],
+    "acuracia_sem_levenshtein": [
+      72.0,
+      68.0,
+      60.0,
+      40.0,
+      56.0,
+      24.0,
+      20.0,
+      24.0,
+      24.0
+    ]
+  }
+}

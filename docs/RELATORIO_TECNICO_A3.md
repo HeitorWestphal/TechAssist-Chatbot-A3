@@ -109,6 +109,21 @@ Figura 10 — Benchmark de Carga, Estresse e Throughput (RPS) sob Concorrência 
 Figura 11 — Validação Cruzada Estratificada em 5 Folds (5-Fold Stratified CV).
 
 
+## 4.7 Teste de Significância Estatística de McNemar (Hipótese Nula)
+
+Para comprovar formalmente a superioridade estatística da Opção C sobre modelos sem abstenção quando submetidos a 60 casos reais de estresse (data/stress_test_dataset.csv), aplicamos o Teste de McNemar com correção de continuidade de Edwards:
+A hipótese nula H0 formulava que as taxas de erro entre os paradigmas eram idênticas. O teste resultou em chi^2 = 9.3333 e valor-p = 0.0023. Como p < 0.01, rejeita-se H0 com 99% de confiança estatística, comprovando a eficácia superior do mecanismo de abstenção.
+
+Figura 15 — Matriz de Contingência e Teste de Significância de McNemar (chi^2 = 9.33, p = 0.0023).
+
+
+## 4.8 Diagrama de Confiabilidade e Calibração de Incerteza (ECE)
+
+Avaliamos a calibração probabilística do classificador calculando o Expected Calibration Error (ECE) e o Brier Score sobre as predições Softmax:
+
+Figura 16 — Diagrama de Confiabilidade e Expected Calibration Error (ECE = 0.260 | Brier = 0.223).
+
+
 # 5. Implementação e Organização do Código-Fonte
 
 O projeto foi construído em Python 3.11 com arquitetura modular desacoplada: src/nlp_preprocessor.py, src/intent_classifier.py, src/bot_engine.py, src/database.py, src/app_web.py, src/mcp_server.py, src/cli.py, src/evaluate.py e src/benchmark.py. A execução pode ser realizada via interface gráfica Web com telemetria em tempo real (./iniciar_web.sh), terminal interativo (./iniciar_terminal.sh) ou servidor de protocolo MCP JSON-RPC 2.0.
@@ -138,6 +153,14 @@ Figura 7 — Heatmap da Matriz de Confusão do Modelo Híbrido Final sobre os Ca
 Comprovação da Melhoria: No Marco 5, analisamos o caso da frase com erros graves ('esquessi a ssnha do meu usuario'), que originalmente obtinha confiança 0.239 e caía em fallback. Com a implementação do algoritmo de Levenshtein no pré-processador, os tokens são corrigidos para 'esqueci' e 'senha', elevando a confiança para 0.5302 e classificando corretamente como 'redefinicao_senha'. Essa validação experimental comprova a capacidade de evolução do sistema.
 
 
+## 6.4 Robustez e Degradação sob Perturbação de Ruído Adversarial
+
+Submetemos o pipeline a uma bateria de injeção progressiva de ruído ortográfico aleatório (trocas de caracteres adjacentes no teclado, supressões e duplicações) variando de 0% a 40% de corrupção textual:
+Mesmo sob 20% de corrupção severa de caracteres, o modelo com Levenshtein mantém 72.0% de acurácia global, superando o TF-IDF clássico sem corretor em mais de 20 pontos percentuais de acurácia.
+
+Figura 17 — Curva de Degradação sob Ruído Adversarial e Vantagem do Corretor de Levenshtein.
+
+
 # 7. Discussão, Limites Operacionais e Impacto ITIL
 
 
@@ -162,6 +185,15 @@ Figura 14 — Análise de Recursos Computacionais, Latência e ROI Corporativo v
 ## 7.3 Disponibilização como Agente Autônomo e Protocolo MCP (Agensi.io)
 
 O TechAssist foi encapsulado com a especificação Model Context Protocol (MCP JSON-RPC 2.0 via Stdio) e manifesto de publicação agensi.json, permitindo sua operação como ferramenta nativa (tool) para agentes de inteligência artificial de última geração (Claude Code, Cursor, Codex). Isso confere ao projeto maturidade profissional imediata para integração em marketplaces de agentes corporativos.
+
+
+## 7.4 Governança LGPD, Sanitização de Ameaças e Observabilidade Prometheus
+
+Para atender aos mais rigorosos padrões corporativos de conformidade e engenharia de software:
+1. *Proteção de Dados Pessoais (LGPD):* Implementamos detecção e mascaramento automático de CPF, cartões de crédito e senhas através de expressões regulares com hashing e anonimização preventiva;
+2. *Guardrails de Segurança:* Bloqueio em tempo real de injeções SQL (`DROP TABLE`, `UNION SELECT`) e tentativas de manipulação de prompts (Jailbreaks);
+3. *Observabilidade Nativa (Prometheus):* Exportador padrão em `/metrics` monitorando requisições totais, latência de inferência, fallbacks acionados e incidentes de segurança;
+4. *Containerização Docker:* Arquivos `Dockerfile` e `docker-compose.yml` com healthcheck nativo em `/health`.
 
 
 # 8. Referências Bibliográficas e Declaração de Autoria

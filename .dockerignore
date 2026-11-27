@@ -1,0 +1,10 @@
+venv/
+.git/
+.gitignore
+.pytest_cache/
+.coverage
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+Entrega_A3_TechAssist_Chatbot.zip

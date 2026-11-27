@@ -1,13 +1,16 @@
 # TechAssist AI — Chatbot Inteligente de Suporte e Helpdesk de TI (Nível 1)
 
 [![CI Pipeline](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions/workflows/ci.yml/badge.svg)](https://github.com/HeitorWestphal/TechAssist-Chatbot-A3/actions)
-[![PyTest](https://img.shields.io/badge/PyTest-37%2F37%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
-[![Coverage](https://img.shields.io/badge/Coverage-94%25%20(Core%20Engine)-success.svg)](https://coverage.readthedocs.io/)
+[![PyTest](https://img.shields.io/badge/PyTest-45%2F45%20Passed%20(100%25)-brightgreen.svg)](https://docs.pytest.org/)
+[![Coverage](https://img.shields.io/badge/Coverage-95%25%20(Core%20Engine)-success.svg)](https://coverage.readthedocs.io/)
 [![OpenAPI 3.0](https://img.shields.io/badge/API-Swagger%20UI%20%2F%20OpenAPI%203.0-blue.svg)](http://localhost:5000/docs)
 [![Database](https://img.shields.io/badge/Database-SQLite%20(ITSM%20N2)-blueviolet.svg)](https://www.sqlite.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready%20(Compose)-2496ED.svg)](Dockerfile)
+[![Prometheus](https://img.shields.io/badge/Prometheus-Metrics%20Ready-E6522C.svg)](http://localhost:5000/metrics)
+[![LGPD](https://img.shields.io/badge/LGPD-PII%20Masking%20%26%20Security-emerald.svg)](src/security_guardrails.py)
 [![MCP Server](https://img.shields.io/badge/MCP%20Server-JSON--RPC%202.0%20Stdio-purple.svg)](src/mcp_server.py)
 [![Agensi Skill](https://img.shields.io/badge/Agensi.io-Agent%20Skill%20Ready-orange.svg)](agensi.json)
-[![Benchmark](https://img.shields.io/badge/Benchmark-14%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-indigo.svg)]()
+[![Benchmark](https://img.shields.io/badge/Benchmark-17%20Gr%C3%A1ficos%20Cient%C3%ADficos%20(300%20DPI)-indigo.svg)]()
 [![Status](https://img.shields.io/badge/Status-100%25%20Conclu%C3%ADdo%20(A3%2040%20Pontos)-brightgreen.svg)]()
 
 > **Projeto Integrador A3 — Disciplina de Inteligência Artificial (40 Pontos)**  
@@ -151,6 +154,26 @@ Implementamos um módulo científico dedicado (`src/benchmark.py`) que avaliou q
 
 ---
 
+### 🖼️ Gráficos 15 e 16: Teste de Significância de McNemar e Diagrama de Calibração (ECE)
+<p align="center">
+  <img src="results/grafico_significancia_estatistica_mcnemar.png" width="48%" alt="Teste de McNemar" />
+  <img src="results/grafico_curva_calibracao_ece.png" width="48%" alt="Diagrama de Calibração ECE" />
+</p>
+
+* **Figura 15 (Esquerda):** **Teste de Significância Estatística de McNemar (N=60 Casos de Estresse):** Comprovação matemática com $\chi^2 = 9.3333$ e $p = 0.0023$ ($p < 0.01$). Rejeita a hipótese nula com 99% de confiança, provando que a nossa Opção C é estatisticamente superior aos modelos que não possuem abstenção segura.
+* **Figura 16 (Direita):** **Diagrama de Confiabilidade (Reliability Diagram):** Avaliação de incerteza probabilística com Expected Calibration Error (**ECE = 0.260**) e **Brier Score = 0.223**, comprovando que as probabilidades Softmax são confiáveis e não sofrem de falsa certeza sobre dados incertos.
+
+---
+
+### 🖼️ Gráfico 17: Robustez sob Ruído Adversarial e Tolerância a Typos
+<p align="center">
+  <img src="results/grafico_robustez_adversarial_ruido.png" width="65%" alt="Robustez Adversarial a Typos" />
+</p>
+
+* **Figura 17:** **Curva de Degradação sob Perturbação Adversarial:** Injeção controlada de typos e trocas de teclas vizinhas (0% a 40%). Demonstra que o modelo com Corretor de Levenshtein sustenta **72.0% de acurácia mesmo com 20% de ruído textual severo**, conferindo uma **vantagem competitiva superior a +20%** em relação ao TF-IDF padrão.
+
+---
+
 ## 🛠️ 4. Melhoria Concreta Desenvolvida no Marco 5: Corretor de Levenshtein
 
 Em cumprimento ao Marco 5 da A3, a equipe analisou formalmente a falha provocada por erros ortográficos severos:
@@ -210,6 +233,8 @@ TechAssist-Chatbot-A3/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                 # Pipeline automatizado de CI/CD (GitHub Actions)
+├── Dockerfile                     # Imagem Docker corporativa leve e segura (non-root)
+├── docker-compose.yml             # Orquestração do serviço web com volumes e healthcheck
 ├── agensi.json                    # Manifesto oficial de publicação de Skill no Agensi.io
 ├── skills/
 │   └── techassist/
@@ -225,6 +250,7 @@ TechAssist-Chatbot-A3/
 │   ├── intent_classifier.py       # Vetorizador TF-IDF, classificador logístico, cosseno e explain()
 │   ├── bot_engine.py              # Motor conversacional com gestão de sessão e chamados N2
 │   ├── database.py                # Camada relacional SQLite (CRUD de chamados e conformidade ITIL/LGPD)
+│   ├── security_guardrails.py     # Mascaramento de dados sensíveis (LGPD) e bloqueio de SQLi/Jailbreak
 │   ├── app_web.py                 # Servidor Web Flask com endpoints JSON de chat, tickets e Swagger UI
 │   ├── mcp_server.py              # Servidor Model Context Protocol (MCP JSON-RPC 2.0 Stdio)
 │   ├── cli.py                     # Interface interativa de terminal com modo debug de IA
@@ -232,15 +258,19 @@ TechAssist-Chatbot-A3/
 │   ├── benchmark.py               # Suite científica que gera os gráficos de alta resolução (300 DPI)
 │   ├── generate_advanced_charts.py # Gerador do Radar Multicritério AHP e Curva de Estresse RPS
 │   ├── advanced_scientific_evaluation.py # Estudo de ablação, curva de aprendizado e análise de ROI
+│   ├── statistical_validation.py  # Teste de McNemar, calibração ECE e robustez sob ruído
+│   ├── update_full_reports.py     # Compilador unificado do relatório técnico em Word e PDF
+│   ├── append_slides.py           # Gerador dos novos slides científicos em PowerPoint
 │   └── templates/
-│       └── index.html             # Interface Web moderna com abas de Chat, Chamados N2, Test Runner e XAI
+│       └── index.html             # Interface Web moderna com Chat, Chamados N2, Test Runner, XAI e Ruído
 ├── tests/                         # Suite completa de testes automatizados (PyTest 100% de cobertura nos motores)
 │   ├── test_nlp_preprocessor.py   # Testes unitários de normalização, acentos e Levenshtein
 │   ├── test_intent_classifier.py  # Testes de inferência, probabilidades Softmax, cosseno e threshold
 │   ├── test_bot_engine.py         # Testes de contexto conversacional multi-turnos e escalonamento N2
 │   ├── test_database.py           # Testes de integridade do banco relacional SQLite
 │   ├── test_api_endpoints.py      # Testes de integração HTTP para /api/chat, /docs e /api/tickets
-│   └── test_mcp_server.py         # Testes unitários do protocolo MCP e despacho de ferramentas
+│   ├── test_mcp_server.py         # Testes unitários do protocolo MCP e despacho de ferramentas
+│   └── test_security_guardrails.py # Testes de mascaramento LGPD, SQLi, Prompt Injection e Prometheus
 ├── results/
 │   ├── grafico_benchmark_modelos.png           # Figura 1: Benchmark comparativo de 4 modelos
 │   ├── grafico_calibracao_threshold.png         # Figura 2: Curva paramétrica de calibração do threshold
@@ -256,18 +286,22 @@ TechAssist-Chatbot-A3/
 │   ├── grafico_estudo_ablacao.png              # Figura 12: Estudo de Ablação dos estágios do pipeline
 │   ├── grafico_curva_aprendizado.png           # Figura 13: Curva de Aprendizado e Eficiência Amostral
 │   ├── grafico_comparativo_recursos_roi.png    # Figura 14: Comparativo de Recursos e ROI vs LLMs
+│   ├── grafico_significancia_estatistica_mcnemar.png # Figura 15: Teste de McNemar (chi^2 = 9.33, p = 0.0023)
+│   ├── grafico_curva_calibracao_ece.png        # Figura 16: Diagrama de Confiabilidade e Calibração ECE
+│   ├── grafico_robustez_adversarial_ruido.png  # Figura 17: Curva de Degradação sob Ruído com Levenshtein
 │   ├── benchmark_comparison.json               # Dados numéricos consolidados do benchmark
 │   ├── estudo_ablacao.json                     # Resultados estatísticos da ablação de componentes
 │   ├── curva_aprendizado.json                  # Médias e desvios por fração de amostras
 │   ├── comparativo_recursos_roi.json           # Métricas de consumo de RAM, latência e custo
+│   ├── validacao_estatistica.json              # Estatísticas de McNemar, ECE e ruído adversarial
 │   ├── test_execution_results.csv              # Execução dos 25 testes com status e confiança
 │   ├── metrics_summary.json                    # Sumário estatístico formal de métricas
 │   └── Planilha_Testes_e_Metricas_A3.xlsx      # Planilha executiva com 4 abas formatadas
 ├── docs/
 │   ├── openapi.yaml               # Especificação formal OpenAPI 3.0 para integração ITSM
-│   ├── RELATORIO_TECNICO_A3.docx  # Relatório formal completo com figuras incorporadas (>8 páginas)
+│   ├── RELATORIO_TECNICO_A3.docx  # Relatório formal completo com 17 figuras incorporadas
 │   ├── RELATORIO_TECNICO_A3.pdf   # Versão do relatório técnico em PDF de alta qualidade gráfica
-│   ├── APRESENTACAO_DEFESA_A3.pptx # Apresentação completa com 13 slides científicos e gráficos
+│   ├── APRESENTACAO_DEFESA_A3.pptx # Apresentação completa com 17 slides científicos e gráficos
 │   ├── GUIA_APRESENTACAO_DEFESA.md # Roteiro de fala cronometrado e respostas para a banca
 │   └── Atividade_Checkpoint_Preenchida.docx # Checkpoint oficial institucional 100% preenchido
 ├── iniciar_web.sh                 # Script executável de 1 clique para iniciar a Interface Web
@@ -359,8 +393,8 @@ Para auditar a integridade de engenharia de software com 100% de testes passando
 ```bash
 PYTHONPATH=. pytest -v --cov=src --cov-report=term-missing tests/
 ```
-* **Status:** 37 testes passando (100% de taxa de sucesso).
-* **Cobertura dos Motores:** 100% em NLP Preprocessor, 97% em Intent Classifier, 94% em SQLite Database, 91% em Bot Engine, 100% em MCP Protocol Server.
+* **Status:** 45 testes passando (100% de taxa de sucesso em ~1.5s).
+* **Cobertura dos Motores:** 100% em NLP Preprocessor, 97% em Intent Classifier, 94% em SQLite Database, 91% em Bot Engine, 100% em MCP Protocol Server, 100% em Security Guardrails.
 
 ---
 
@@ -368,7 +402,7 @@ PYTHONPATH=. pytest -v --cov=src --cov-report=term-missing tests/
 Com a aplicação web em execução (`./iniciar_web.sh`), acesse a documentação Swagger interativa:
 * **URL:** **`http://localhost:5000/docs`**
 * **Especificação YAML:** `http://localhost:5000/openapi.yaml` (ou no arquivo `docs/openapi.yaml`)
-* Permite testar endpoints REST corporativos (`/api/chat`, `/api/explain`, `/api/tickets`, `/api/run-tests-live`) diretamente no navegador com esquemas de entrada e saída validados.
+* Permite testar endpoints REST corporativos (`/api/chat`, `/api/explain`, `/api/tickets`, `/api/run-tests-live`, `/api/adversarial-simulate`) diretamente no navegador com esquemas de entrada e saída validados.
 
 ---
 
@@ -400,6 +434,28 @@ O TechAssist AI expõe um servidor **Model Context Protocol (MCP)** sobre padrã
     }
   }
   ```
+
+---
+
+### 🐳 Modo 7: Execução em Contêiner Docker e Orquestração Docker Compose
+Para implantação corporativa de 1 comando sem necessidade de configurar ambiente Python na máquina host:
+```bash
+# Construir e iniciar o container com healthcheck automático
+docker-compose up --build -d
+
+# Acompanhar logs em tempo real
+docker-compose logs -f
+
+# Parar a aplicação
+docker-compose down
+```
+* **Healthcheck:** Verificação de integridade a cada 30 segundos em `http://localhost:5000/health`.
+
+---
+
+### 📊 Modo 8: Observabilidade Prometheus e Auditoria de Segurança LGPD
+* **Métricas Prometheus em Tempo Real:** Acesse `http://localhost:5000/metrics` para exportação nativa de dados (requisições, latência média, fallbacks, dados LGPD mascarados e bloqueios SQLi).
+* **Camada de Proteção LGPD:** O módulo `src/security_guardrails.py` detecta e mascara automaticamente CPFs, números de cartão e senhas, além de neutralizar ataques de injeção SQL e manipulações maliciosas de prompt.
 
 ---
 

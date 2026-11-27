@@ -29,7 +29,10 @@ FIG_MAP = {
     "Figura 11": "grafico_cross_validation_kfold.png",
     "Figura 12": "grafico_estudo_ablacao.png",
     "Figura 13": "grafico_curva_aprendizado.png",
-    "Figura 14": "grafico_comparativo_recursos_roi.png"
+    "Figura 14": "grafico_comparativo_recursos_roi.png",
+    "Figura 15": "grafico_significancia_estatistica_mcnemar.png",
+    "Figura 16": "grafico_curva_calibracao_ece.png",
+    "Figura 17": "grafico_robustez_adversarial_ruido.png"
 }
 
 def generate_docx():
